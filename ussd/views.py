@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
+from django.conf import settings
+from urllib.parse import unquote
+from django.http import HttpResponse
 from rest_framework.response import Response
 
 
@@ -11,19 +14,22 @@ response = ''
 @api_view(['GET', 'POST'])
 def get_ussd(request):
 
-  # global response
-  # print(request)
-  # session_id = request.values.get("sessionId", None)
-  # service_code = request.values.get("serviceCode", None)
-  # phone_number = request.values.get("phoneNumber", None)
-  # text = request.values.get("text", "default")
-  
-  session_id = request.query_params.get("sessionId", None)
-  phone_number = request.query_params.get("phoneNumber", None)
-  text = request.query_params.get('text', 'default')
-  print(text)
-  response = ''
-  if text == '':
+  url_params = unquote(request.body.decode("utf"))
+  request_dict = dict((x.strip(), y.strip())
+             for x, y in (element.split('=')
+             for element in url_params.split('&')))
+
+  # print(request_dict)
+
+  session_id = request_dict.get("sessionId", None)
+  service_code = request_dict.get("serviceCode", None)
+  phone_number = request_dict.get("phoneNumber", None)
+  network_code = request_dict.get('networkCode', None)
+  text = request_dict.get('text', None)
+
+
+  response = None
+  if text == '' or text is None:
     response  = "CON What would you want to check \n"
     response += "1. My Account \n"
     response += "2. My phone number"
@@ -39,5 +45,4 @@ def get_ussd(request):
     response = "END Your balance is " + balance
   elif text == '2':
     response = "END This is your phone number " + "phone_number"
-  return Response(response, status=status.HTTP_200_OK)
-
+  return HttpResponse(response, content_type="text/plain")
