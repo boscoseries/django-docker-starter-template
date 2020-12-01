@@ -11,10 +11,21 @@ services:
     depends_on:
       - db
 
+  ngrok:
+    image: shkoliar/ngrok:latest
+    ports:
+      - 4551:4551
+    links:
+      - web
+    environment:
+      - DOMAIN=web
+      - PORT=8000
+    depends_on:
+      - web
+
   db:
     image: postgres
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-
