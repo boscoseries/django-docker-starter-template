@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+from decouple import config
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'drf_yasg',
+    'user'
 ]
 
 MIDDLEWARE = [
@@ -70,21 +74,27 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-
+# AFTK_USERNAME = os.environ.get("AFRICA_TALKING_USERNAME", "username")
+# AFTK_API_KEY = os.environ.get("AFRICA_TALKING_API_KEY", "c520ef817a2e64fc9b75e73313e2dad0a976a31bfbbff55aafeaca8d7a2a6129")
+  
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432,
+if os.environ.get('DEBUG', DEBUG) == True:
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
+            'NAME': os.environ.get("SQL_DATABASE", "ussd_db"),
+            'USER': os.environ.get("SQL_USER", "oyo_ussd"),
+            'PASSWORD':  os.environ.get("SQL_PASSWORD", "oyo_ussd"),
+            'HOST': os.environ.get("SQL_HOST", "db"),
+            'PORT': os.environ.get("SQL_PORT", 5432),
+            "TEST": {
+                'NAME': "ussd_test"
+            }
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -123,3 +133,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Custom user model
+AUTH_USER_MODEL = "user.User"

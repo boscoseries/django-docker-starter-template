@@ -8,6 +8,8 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    # env_file:
+    #   - ./.env
     depends_on:
       - db
 
@@ -24,8 +26,15 @@ services:
       - web
 
   db:
-    image: postgres
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    image: postgres:13.1-alpine
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    ports:
+      - 5432:5432 # HOST:CONTAINER
+
+
+volumes:
+  postgres_data:
