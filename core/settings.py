@@ -18,7 +18,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -29,7 +28,6 @@ SECRET_KEY = '7et@t7qd$5ijb(j75m)5tljv9ygwdwb$^*%uc4#da2z!0vu4s4'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -76,7 +74,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 # AFTK_USERNAME = os.environ.get("AFRICA_TALKING_USERNAME", "username")
 # AFTK_API_KEY = os.environ.get("AFRICA_TALKING_API_KEY", "c520ef817a2e64fc9b75e73313e2dad0a976a31bfbbff55aafeaca8d7a2a6129")
-  
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -84,10 +81,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 if os.environ.get('DEBUG', DEBUG) == True:
     DATABASES = {
         'default': {
-            'ENGINE': os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
+            'ENGINE': os.environ.get("SQL_ENGINE",
+                                     "django.db.backends.postgresql"),
             'NAME': os.environ.get("SQL_DATABASE", "ussd_db"),
             'USER': os.environ.get("SQL_USER", "oyo_ussd"),
-            'PASSWORD':  os.environ.get("SQL_PASSWORD", "oyo_ussd"),
+            'PASSWORD': os.environ.get("SQL_PASSWORD", "oyo_ussd"),
             'HOST': os.environ.get("SQL_HOST", "db"),
             'PORT': os.environ.get("SQL_PORT", 5432),
             "TEST": {
@@ -114,7 +112,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -127,7 +124,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
