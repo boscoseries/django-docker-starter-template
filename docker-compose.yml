@@ -25,6 +25,14 @@ services:
     depends_on:
       - web
 
+  redis:
+    image: redis:alpine
+    # build:
+    #   context: .
+    #   dockerfile: docker/redis/Dockerfile
+    ports:
+      - 6379:6379
+
   db:
     image: postgres:13.1-alpine
     restart: always
@@ -34,7 +42,6 @@ services:
       - ./.env
     ports:
       - 5432:5432 # HOST:CONTAINER
-
 
 volumes:
   postgres_data:
