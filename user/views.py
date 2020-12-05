@@ -42,6 +42,8 @@ class UserViewsets(viewsets.ModelViewSet):
         else:
             session_data = session
 
+        print(session_data)
+        print(text)
         try:
             option = text.split('*')[-1]
             response = ''
@@ -105,6 +107,19 @@ class UserViewsets(viewsets.ModelViewSet):
                     response_text['4.6'],
                     response_text['4.7'],
                     response_text['4.8'],
+                    response_text['99'],
+                )
+                session_data['level'] = "5"
+                cache.set(phone_number, session_data)
+            elif (session_data['level'] == "5") & (option == '99'):
+                # if len(text.split('*')) != 5 or (option not in [
+                #         '8', '9', '10', '11', '12', '13', '14', '15', '16',
+                #         '17'
+                # ]):
+                #     raise Exception()
+
+                # session_data['lga'] = lga[option]
+                response = create_response(
                     response_text['4.9'],
                     response_text['4.10'],
                     response_text['4.11'],
@@ -114,14 +129,39 @@ class UserViewsets(viewsets.ModelViewSet):
                     response_text['4.15'],
                     response_text['4.16'],
                     response_text['4.17'],
+                    response_text['88'],
                 )
                 session_data['level'] = "5"
                 cache.set(phone_number, session_data)
-            elif session_data['level'] == "5":
-                if len(text.split('*')) != 5 or (option not in [
-                        '1', '2', '3', '4', '5', '6', '99'
-                ]):
-                    raise Exception()
+            elif (session_data['level'] == "5") & (option == '88'):
+                # if len(text.split('*')) != 5 or (option not in [
+                #         '8', '9', '10', '11', '12', '13', '14', '15', '16',
+                #         '17'
+                # ]):
+                #     raise Exception()
+
+                # session_data['lga'] = lga[option]
+                response = create_response(
+                    response_text['4'],
+                    response_text['4.1'],
+                    response_text['4.2'],
+                    response_text['4.3'],
+                    response_text['4.4'],
+                    response_text['4.5'],
+                    response_text['4.6'],
+                    response_text['4.7'],
+                    response_text['4.8'],
+                    response_text['99'],
+                )
+                session_data['level'] = "5"
+                cache.set(phone_number, session_data)
+            elif (session_data['level'] == "5") & (
+                    option in ['1', '2', '3', '4', '5', '6', '7', '8']):
+                print('got in here level 5')
+                # if len(text.split('*')) != 5 or (option not in [
+                #         '1', '2', '3', '4', '5', '6', '7', '99'
+                # ]):
+                #     raise Exception()
 
                 session_data['lga'] = lga[option]
                 response = create_response(
@@ -131,13 +171,57 @@ class UserViewsets(viewsets.ModelViewSet):
                     response_text['5.6'], response_text['5.7'],
                     response_text['5.8'], response_text['5.9'],
                     response_text['5.10'], response_text['5.11'])
-                session_data['level'] = "6"
+                session_data['level'] = "7"
+                cache.set(phone_number, session_data)
+            elif (session_data['level'] == "5") & (option in [
+                    '9', '10', '11', '12', '13', '14', '15', '16', '17'
+            ]):
+                # if len(text.split('*')) != 5 or (option not in [
+                #         '1', '2', '3', '4', '5', '6', '7', '99'
+                # ]):
+                #     raise Exception()
+
+                session_data['lga'] = lga[option]
+                response = create_response(
+                    response_text['5'], response_text['5.1'],
+                    response_text['5.2'], response_text['5.3'],
+                    response_text['5.4'], response_text['5.5'],
+                    response_text['5.6'], response_text['5.7'],
+                    response_text['5.8'], response_text['5.9'],
+                    response_text['5.10'], response_text['5.11'])
+                session_data['level'] = "7"
                 cache.set(phone_number, session_data)
             elif session_data['level'] == "6":
-                if len(text.split('*')) != 6 or (option not in [
-                        '1', '2', '3', '4', '5', '6', '99'
-                ]):
-                    raise Exception()
+                # if len(text.split('*')) != 5 or (option not in [
+                #         '1', '2', '3', '4', '5', '6', '7', '99'
+                # ]):
+                #     raise Exception()
+                print('got in here level 6')
+
+                session_data['lga'] = lga[option]
+                response = create_response(
+                    response_text['5'], response_text['5.1'],
+                    response_text['5.2'], response_text['5.3'],
+                    response_text['5.4'], response_text['5.5'],
+                    response_text['5.6'], response_text['5.7'],
+                    response_text['5.8'], response_text['5.9'],
+                    response_text['5.10'], response_text['5.11'])
+                session_data['level'] = "7"
+                cache.set(phone_number, session_data)
+            elif session_data['level'] == "7":
+                # if len(text.split('*')) != 6 or (option not in [
+                #         '1', '2', '3', '4', '5', '6', '7', '8', '99'
+                # ]):
+                #     raise Exception()
+
+                # if option == '99':
+                #     response = create_response(
+                #         response_text['6'],
+                #         response_text['6.9'],
+                #         response_text['6.10'],
+                #     )
+                #     return HttpResponse(response, content_type="text/plain")
+                print('got in here level 7')
 
                 session_data['town'] = town[option]
                 response = create_response(
@@ -147,14 +231,18 @@ class UserViewsets(viewsets.ModelViewSet):
                     response_text['6.3'],
                     response_text['6.4'],
                     response_text['6.5'],
+                    response_text['6.6'],
+                    response_text['6.7'],
+                    response_text['6.8'],
                 )
-                session_data['level'] = "7"
+                session_data['level'] = "8"
                 cache.set(phone_number, session_data)
-            elif session_data['level'] == "7":
-                if len(text.split('*')) != 7 or (option not in [
-                        '1', '2', '3', '4', '5', '6', '99'
-                ]):
-                    raise Exception()
+            elif session_data['level'] == "8":
+                # if len(text.split('*')) != 7 or (option not in [
+                #         '1', '2', '3', '4', '5', '6', '7', '8', '99'
+                # ]):
+                #     raise Exception()
+                print('got in here level 8')
 
                 session_data['preferred_hospital'] = hospitals[option]
                 response = create_response(
@@ -165,13 +253,15 @@ class UserViewsets(viewsets.ModelViewSet):
                     response_text['7.4'],
                     response_text['7.5'],
                 )
-                session_data['level'] = "8"
+                session_data['level'] = "9"
                 cache.set(phone_number, session_data)
-            elif session_data['level'] == "8":
-                if len(text.split('*')) != 8 or (option not in [
-                        '1', '2', '3', '4', '5', '6', '99'
-                ]):
-                    raise Exception()
+            elif session_data['level'] == "9":
+                # if len(text.split('*')) != 8 or (option not in [
+                #         '1', '2', '3', '4', '5', '6', '7', '8', '99'
+                # ]):
+                # raise Exception()
+                print('got in here level 9')
+
                 session_data['preferred_pharmacy'] = pharmacies[option]
                 response = create_response(
                     response_text['8'],
@@ -181,13 +271,15 @@ class UserViewsets(viewsets.ModelViewSet):
                     response_text['8.4'],
                     response_text['8.5'],
                 )
-                session_data['level'] = "9"
+                session_data['level'] = "10"
                 cache.set(phone_number, session_data)
-            elif session_data['level'] == "9":
-                if len(text.split('*')) != 9 or (option not in [
-                        '1', '2', '3', '4', '5', '6', '99'
-                ]):
-                    raise Exception()
+            elif session_data['level'] == "10":
+                # if len(text.split('*')) != 9 or (option not in [
+                #         '1', '2', '3', '4', '5', '6', '7', '8', '99'
+                # ]):
+                #     raise Exception()
+                print('got in here level 10')
+
                 session_data['preferred_laboratory'] = laboratories[option]
                 session_data['phone_number'] = phone_number
                 session_data.pop('level')
