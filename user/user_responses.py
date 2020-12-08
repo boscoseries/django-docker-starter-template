@@ -1,3 +1,6 @@
+from .utils import create_response
+from django.http import HttpResponse
+
 lga = {
     "1": "Akinyele",
     "2": "Iseyin",
@@ -90,19 +93,7 @@ laboratories = {
     "8": "laboratory 8",
 }
 
-# s = string
-# d = digit
 response_text = {
-    "0": "CON Welcome to Oyo State Tele-medicine Service",
-    "0.1": "1. Register",
-    "0.2": "2. Quit",
-    "1": "CON Input Fullname",
-    "1.1": "(Surname Firstname Lastname)",
-    "2": "CON Select Gender",
-    "2.1": "1. Male",
-    "2.2": "2. Female",
-    "3": "CON Input Date of Birth",
-    "3.1": "(DD-MM-YYYY)",
     "4": "CON Select Local Govt. Area",
     "4.1": "1. {}".format(lga['1']),
     "4.2": "2. {}".format(lga['2']),
@@ -114,25 +105,12 @@ response_text = {
     "4.8": "8. {}".format(lga['8']),
     "4.9": "CON 9. Lagelu, Egbeda, Ona Ara",
     "4.10": "10. Iwajowa, Kajola",
-    "4.11": "11. Atisbo, Itesiwaju",
-    "4.12": "12. Saki East, Saki West",
-    "4.13": "13. Ibarapa North, Ibarapa East, Ibarapa Central, Ido",
-    "4.14": "14. Atiba, Ori Ire",
-    "4.15": "15. Oyo West, Oyo East, Afijio",
-    "4.16": "16. Ogbomosho North, Ogbomosho South, Surulere, Ogo Oluwa",
-    "4.17": "17. Irepo, Orelope, Olorunsogo",
     "5": "CON Select Town / Community",
     "5.1": "1. {}".format(town['1']),
     "5.2": "2. {}".format(town['2']),
     "5.3": "3. {}".format(town['3']),
     "5.4": "4. {}".format(town['4']),
     "5.5": "5. {}".format(town['5']),
-    "5.6": "6. town 6, town 7, town 8",
-    "5.7": "7. town 9, town 10",
-    "5.8": "8. town 11, town 12",
-    "5.9": "9. town 13, town 14",
-    "5.10": "10. town 15, town 16, town 17, town 18",
-    "5.11": "11. town 19, town 20",
     "6": "CON Select Preferred Hospital",
     "6.1": "1. {}".format(hospitals['1']),
     "6.2": "2. {}".format(hospitals['2']),
@@ -162,7 +140,267 @@ response_text = {
     "8.8": "8. {}".format(laboratories['8']),
     "99": "99. Next",
     "88": "88. Back",
-    "success": "END Registration Successful",
-    "success-1": "Thank You!",
     "error": "END Error Ocurred",
 }
+
+
+def introduction():
+    return """
+    CON Welcome to Oyo State Tele-medicine Service
+    1. Register
+    2. Exit
+"""
+
+
+def quit():
+    return "END Goodbye"
+
+
+def success():
+    return """
+    END Registration Successful
+    Thank You!
+"""
+
+
+def get_fullname():
+    return """
+    CON Input Fullname
+    (Surname Firstname Lastname)
+"""
+
+
+def get_gender():
+    return """
+    CON Select Gender
+    1. Male
+    2. Female
+"""
+
+
+def get_dob():
+    return """
+    CON Input Date of Birth"
+    (DD-MM-YYYY)
+"""
+
+
+def get_lga():
+    return create_response(
+        response_text['4'],
+        response_text['4.1'],
+        response_text['4.2'],
+        response_text['4.3'],
+        response_text['4.4'],
+        response_text['4.5'],
+        response_text['4.6'],
+        response_text['4.7'],
+        response_text['4.8'],
+        response_text['99'],
+    )
+
+
+def get_lga_page_one():
+    return create_response(
+        response_text['4'],
+        response_text['4.1'],
+        response_text['4.2'],
+        response_text['4.3'],
+        response_text['4.4'],
+        response_text['4.5'],
+        response_text['4.6'],
+        response_text['4.7'],
+        response_text['4.8'],
+        response_text['99'],
+    )
+
+
+def get_lga_page_two():
+    return create_response(
+        response_text['4.9'],
+        response_text['4.10'],
+        response_text['88'],
+    )
+
+
+def get_lga_group_one():
+    return """
+    CON 9. Lagelu
+    10. Egbeda
+    11. Ona Ara
+    88. Back
+"""
+
+
+def get_lga_group_two():
+    return """
+    CON 12. Iwajowa
+    13. Kajola
+    88. Back
+"""
+
+
+def get_town_page_one():
+    return create_response(response_text['5'], response_text['5.1'],
+                           response_text['5.2'], response_text['5.3'],
+                           response_text['5.4'], response_text['5.5'])
+
+
+def get_hospitals():
+    return create_response(
+        response_text['6'],
+        response_text['6.1'],
+        response_text['6.2'],
+        response_text['6.3'],
+        response_text['6.4'],
+        response_text['6.5'],
+        response_text['6.6'],
+        response_text['6.7'],
+        response_text['6.8'],
+    )
+
+
+def get_pharmacies():
+    return create_response(
+        response_text['7'],
+        response_text['7.1'],
+        response_text['7.2'],
+        response_text['7.3'],
+        response_text['7.4'],
+        response_text['7.5'],
+    )
+
+
+def get_laboratories():
+    return create_response(
+        response_text['8'],
+        response_text['8.1'],
+        response_text['8.2'],
+        response_text['8.3'],
+        response_text['8.4'],
+        response_text['8.5'],
+    )
+
+
+def select_service(firstname):
+    return """
+    CON Welcome {}, what would you like to do today?
+    1. Request Doctor Engagement
+    2. Book Physical Consultation
+    3. Check Prescription
+    4. Run Tests
+    5. Engage Hospital
+    6. Book Health Taxi
+""".format(firstname)
+
+
+def doctor_will_get_back():
+    return """
+    END Received.
+    Doctor will get back to you.
+"""
+
+
+def request_doctor_engagement():
+    return """
+    END Received.
+    Doctor will get back to you.
+"""
+
+
+def book_physical_consultation():
+    return """
+    CON Doctor's area of specialization.
+    1. Surgery
+    2. Dentistry
+    3 Optometry
+"""
+
+
+def check_prescription():
+    return """
+    CON 1. Purchase Prescription
+"""
+
+
+def prescription_unavailable():
+    return """
+    CON Not available in preferred pharmacy, will you like to proceed to another pharmacy?
+    1. Yes
+    2. No
+"""
+
+
+def prescription_will_get_back():
+    return """
+    END Received.
+    Pharmacy will get back to you.
+"""
+
+
+def session_end():
+    return """
+    END Received.
+    Session ended!
+"""
+
+
+def run_tests():
+    return """
+    CON Select Service
+    1. Check recommendadtions
+    2. Select test type
+"""
+
+
+def tests_type():
+    return """
+    CON 1. option 1
+    2. option 2
+"""
+
+
+def test_type_unavailable():
+    return """
+    CON Not available in preferred laboratory, will you like to proceed to another laboratory?
+    1. Yes
+    2. No
+"""
+
+
+def laboratory_will_get_back():
+    return """
+    END Received.
+    Laboratory will get back to you.
+"""
+
+
+def engage_hospitals():
+    return """
+    CON Select Service.
+    1. Doctor
+    2. Pharmacy
+    3. Laboratory
+"""
+
+
+def hospital_unavailable():
+    return """
+    CON Not available in preferred hospital, will you like to proceed to another hospital?
+    1. Yes
+    2. No
+"""
+
+
+def hospital_will_get_back():
+    return """
+    END Received.
+    Hospital will get back to you.
+"""
+
+
+def book_health_taxi():
+    return """
+    END Received.
+    Health Taxi will get back to you.
+"""
