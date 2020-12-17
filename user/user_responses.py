@@ -1,3 +1,5 @@
+import requests
+from django.conf import settings
 from .utils import create_response
 from django.http import HttpResponse
 
@@ -60,39 +62,6 @@ town = {
     "20": "town 20",
 }
 
-hospitals = {
-    "1": "hospital 1",
-    "2": "hospital 2",
-    "3": "hospital 3",
-    "4": "hospital 4",
-    "5": "hospital 5",
-    "6": "hospital 6",
-    "7": "hospital 7",
-    "8": "hospital 8",
-}
-
-pharmacies = {
-    "1": "pharmacy 1",
-    "2": "pharmacy 2",
-    "3": "pharmacy 3",
-    "4": "pharmacy 4",
-    "5": "pharmacy 5",
-    "6": "pharmacy 6",
-    "7": "pharmacy 7",
-    "8": "pharmacy 8"
-}
-
-laboratories = {
-    "1": "laboratory 1",
-    "2": "laboratory 2",
-    "3": "laboratory 3",
-    "4": "laboratory 4",
-    "5": "laboratory 5",
-    "6": "laboratory 6",
-    "7": "laboratory 7",
-    "8": "laboratory 8",
-}
-
 response_text = {
     "4": "CON Select Local Govt. Area",
     "4.1": "1. {}".format(lga['1']),
@@ -111,37 +80,19 @@ response_text = {
     "5.3": "3. {}".format(town['3']),
     "5.4": "4. {}".format(town['4']),
     "5.5": "5. {}".format(town['5']),
-    "6": "CON Select Preferred Hospital",
-    "6.1": "1. {}".format(hospitals['1']),
-    "6.2": "2. {}".format(hospitals['2']),
-    "6.3": "3. {}".format(hospitals['3']),
-    "6.4": "4. {}".format(hospitals['4']),
-    "6.5": "5. {}".format(hospitals['5']),
-    "6.6": "6. {}".format(hospitals['6']),
-    "6.7": "7. {}".format(hospitals['7']),
-    "6.8": "8. {}".format(hospitals['8']),
-    "7": "CON Select Preferred Pharmacy",
-    "7.1": "1. {}".format(pharmacies['1']),
-    "7.2": "2. {}".format(pharmacies['2']),
-    "7.3": "3. {}".format(pharmacies['3']),
-    "7.4": "4. {}".format(pharmacies['4']),
-    "7.5": "5. {}".format(pharmacies['5']),
-    "7.6": "6. {}".format(pharmacies['6']),
-    "7.7": "7. {}".format(pharmacies['7']),
-    "7.8": "8. {}".format(pharmacies['8']),
-    "8": "CON Select Preferred Laboratory",
-    "8.1": "1. {}".format(laboratories['1']),
-    "8.2": "2. {}".format(laboratories['2']),
-    "8.3": "3. {}".format(laboratories['3']),
-    "8.4": "4. {}".format(laboratories['4']),
-    "8.5": "5. {}".format(laboratories['5']),
-    "8.6": "6. {}".format(laboratories['6']),
-    "8.7": "7. {}".format(laboratories['7']),
-    "8.8": "8. {}".format(laboratories['8']),
     "99": "99. Next",
     "88": "88. Back",
     "error": "END Error Ocurred",
 }
+
+
+def create_user(data):
+    try:
+        user = requests.post('{}/citizen'.format(settings.BASE_URL), data=data)
+        if user.status_code == 201:
+            return {'success': True}
+    except Exception as e:
+        return {'success': False, 'message': str(e)}
 
 
 def introduction():
@@ -166,7 +117,7 @@ def success():
 def get_fullname():
     return """
     CON Input Fullname
-    (Surname Firstname Lastname)
+    (Surname Firstname Middlename)
 """
 
 
@@ -247,39 +198,42 @@ def get_town_page_one():
 
 
 def get_hospitals():
-    return create_response(
-        response_text['6'],
-        response_text['6.1'],
-        response_text['6.2'],
-        response_text['6.3'],
-        response_text['6.4'],
-        response_text['6.5'],
-        response_text['6.6'],
-        response_text['6.7'],
-        response_text['6.8'],
-    )
+    try:
+        response = 'CON Select Preferred Hospital\n'
+        hospital_dict = {}
+        hospitals = requests.get('{}/hospital'.format(settings.BASE_URL))
+        for i, j in enumerate(hospitals.json()['data']):
+            hospital_dict[str(i + 1)] = j['_id']
+            response = response + f"{i+1}. {j['name']}\n"
+        return [hospital_dict, response]
+    except Exception as e:
+        return str(e)
 
 
 def get_pharmacies():
-    return create_response(
-        response_text['7'],
-        response_text['7.1'],
-        response_text['7.2'],
-        response_text['7.3'],
-        response_text['7.4'],
-        response_text['7.5'],
-    )
+    try:
+        response = 'CON Select Preferred Pharmacy\n'
+        pharmacy_dict = {}
+        pharmacies = requests.get('{}/pharmacy'.format(settings.BASE_URL))
+        for i, j in enumerate(pharmacies.json()['data']):
+            pharmacy_dict[str(i + 1)] = j['_id']
+            response = response + f"{i+1}. {j['name']}\n"
+        return [pharmacy_dict, response]
+    except Exception as e:
+        return str(e)
 
 
 def get_laboratories():
-    return create_response(
-        response_text['8'],
-        response_text['8.1'],
-        response_text['8.2'],
-        response_text['8.3'],
-        response_text['8.4'],
-        response_text['8.5'],
-    )
+    try:
+        response = 'CON Select Preferred Laboratory\n'
+        laboratory_dict = {}
+        laboratories = requests.get('{}/laboratory'.format(settings.BASE_URL))
+        for i, j in enumerate(laboratories.json()['data']):
+            laboratory_dict[str(i + 1)] = j['_id']
+            response = response + f"{i+1}. {j['name']}\n"
+        return [laboratory_dict, response]
+    except Exception as e:
+        return str(e)
 
 
 def select_service(firstname):

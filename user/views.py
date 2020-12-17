@@ -44,14 +44,9 @@ class UserViewsets(viewsets.ModelViewSet):
         option = text.split('*')[-1]
         response = ''
 
-        user = None
-        try:
-            user = get_user_model().objects.filter(
-                phone_number=phone_number).first()
-        except Exception as e:
-            return str(e)
+        user = r.user_exists(phone_number)
 
-        if user is None:
+        if not user['exists']:
             try:
                 """
                 New User Registration
@@ -74,8 +69,11 @@ class UserViewsets(viewsets.ModelViewSet):
 
                 elif (session_data['level']
                       == "2") and (len(option.split('+')) >= 2):
-                    session_data['fullname'] = text.split('*')[-1].replace(
-                        '+', ' ')
+                    name = option.split('+')
+                    session_data['lastName'] = name[0]
+                    session_data['firstName'] = name[1]
+                    session_data['middleName'] = name[2] if len(
+                        name) > 2 else None
                     session_data['level'] = "3"
                     cache.set(phone_number, session_data)
                     response = r.get_gender()
@@ -95,7 +93,7 @@ class UserViewsets(viewsets.ModelViewSet):
                     if len(dob) != 3:
                         raise Exception()
 
-                    session_data['date_of_birth'] = datetime.date(
+                    session_data['dob'] = datetime.date(
                         int(dob[2]), int(dob[1]), int(dob[0]))
                     session_data['level'] = "5"
                     cache.set(phone_number, session_data)
@@ -151,40 +149,50 @@ class UserViewsets(viewsets.ModelViewSet):
 
                 elif (session_data['level'] == "6") & (
                         option in ['1', '2', '3', '4', '5', '6', '7', '8']):
+                    hospital_dict, response = r.get_hospitals()
                     session_data['town'] = town[option]
                     session_data['level'] = "7"
+                    session_data['hospitals'] = hospital_dict
                     cache.set(phone_number, session_data)
-                    response = r.get_hospitals()
 
                 elif session_data['level'] == "7" and (option in [
                         '1', '2', '3', '4', '5', '6', '7', '8'
                 ]):
-                    session_data['preferred_hospital'] = hospitals[option]
+                    pharmacy_dict, response = r.get_pharmacies()
+                    session_data['pref_hospital'] = session_data['hospitals'][
+                        option]
+                    session_data.pop('hospitals')
                     session_data['level'] = "8"
+                    session_data['pharmacies'] = pharmacy_dict
                     cache.set(phone_number, session_data)
-                    response = r.get_pharmacies()
 
                 elif session_data['level'] == "8" and (option in [
                         '1', '2', '3', '4', '5'
                 ]):
-                    session_data['preferred_pharmacy'] = pharmacies[option]
+                    laboratory_dict, response = r.get_laboratories()
+                    session_data['pref_pharmacy'] = session_data['pharmacies'][
+                        option]
+                    session_data.pop('pharmacies')
                     session_data['level'] = "9"
+                    session_data['laboratories'] = laboratory_dict
                     cache.set(phone_number, session_data)
-                    response = r.get_laboratories()
 
                 elif session_data['level'] == "9" and (option in [
                         '1', '2', '3', '4', '5'
                 ]):
-                    session_data['preferred_laboratory'] = laboratories[option]
-                    session_data['phone_number'] = phone_number
+                    session_data['pref_laboratory'] = session_data[
+                        'laboratories'][option]
+                    session_data['phone'] = phone_number
+                    session_data.pop('laboratories')
                     session_data.pop('level')
-                    session_data.pop('group')
-
-                    new_user = User(**session_data)
-                    new_user.set_password('password')
-                    new_user.save()
-                    response = r.success()
-                    cache.delete(phone_number)
+                    session_data.pop('group') if session_data.get(
+                        'group') is not None else None
+                    new_user = r.create_user(session_data)
+                    if new_user['success']:
+                        response = r.success()
+                        cache.delete(phone_number)
+                    else:
+                        raise Exception()
                 else:
                     raise Exception('something went wrong')
                 return HttpResponse(response, content_type="text/plain")
@@ -193,7 +201,7 @@ class UserViewsets(viewsets.ModelViewSet):
                 response = create_response(response_text['error'], str(e))
                 return HttpResponse(response, content_type="text/plain")
 
-        if user:
+        if user['exists']:
             try:
                 """
                     Returning User
@@ -201,7 +209,7 @@ class UserViewsets(viewsets.ModelViewSet):
                 """
                 print(session_data, 'top _level', option, text)
                 if (session_data['level'] == '0'):
-                    response = r.select_service(user.fullname.split(' ')[0])
+                    response = r.select_service(user['obj']['lastName'])
                     session_data['level'] = "1"
                     cache.set(phone_number, session_data)
 
