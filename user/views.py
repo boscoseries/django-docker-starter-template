@@ -8,7 +8,7 @@ from django.contrib.sessions.backends.db import SessionStore
 from .serializers import UserSerializer
 from urllib.parse import unquote
 from django.http import HttpResponse, HttpResponseRedirect
-from .user_responses import response_text, lga, town, hospitals, laboratories, pharmacies
+from .user_responses import response_text, lga, town
 from .utils import create_response
 from .models import User
 import user.user_responses as r
@@ -52,7 +52,7 @@ class UserViewsets(viewsets.ModelViewSet):
                 New User Registration
 
                 """
-                print(session_data, 'top _level', option, text)
+                # print(session_data, 'top _level', option, text)
                 if session_data['level'] == "0":
                     session_data['level'] = "1"
                     cache.set(phone_number, session_data)
