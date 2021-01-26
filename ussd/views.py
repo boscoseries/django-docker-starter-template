@@ -8,6 +8,7 @@ from .serializers import USSDSerializer
 from urllib.parse import unquote
 from django.http import HttpResponse
 from .register import Registration
+from .consult import Consultation
 from ussd.requests import Request
 
 req = Request(base_url=None)
@@ -42,19 +43,16 @@ class USSDViewsets(viewsets.ModelViewSet):
             session_data = session
 
         user_option = text.split('*')[-1]
-        citizen = req.make_request('post', '/citizen',
+        citizen = req.make_request('post',
+                                   '/citizen',
                                    data={
                                        "action": "check-unique",
                                        "phone": phone_number
                                    })
 
         level = int(session_data.get('level'))
-        if citizen['unique']:
-            try:
-                """
-                New User Registration
-
-                """
+        try:
+            if citizen['unique']:
                 register = Registration(session_id=session_id,
                                         session_data=session_data,
                                         user_option=user_option,
@@ -68,7 +66,24 @@ class USSDViewsets(viewsets.ModelViewSet):
 
                 if level >= 1:
                     return register.execute()
+                raise Exception('Something went wrong!')
 
-                return HttpResponse("response", content_type="text/plain")
-            except Exception as e:
-                cache.delete(session_id)
+            if not citizen['unique']:
+                consult = Consultation(session_id=session_id,
+                                       session_data=session_data,
+                                       user_option=user_option,
+                                       user=citizen['data'][0],
+                                       phone_number=phone_number,
+                                       level=level,
+                                       base_url=None)
+                if level == 0:
+                    session_data['level'] = 1
+                    return consult.start()
+
+                if level >= 1:
+                    return consult.execute()
+                raise Exception('Something went wrong!')
+
+        except Exception as e:
+            return HttpResponse(str(e), content_type="text/plain")
+            cache.delete(session_id)

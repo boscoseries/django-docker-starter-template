@@ -46,6 +46,5 @@ urlpatterns = [
         name='schema-redoc'),
     path('api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
-    path('api/v1/ussd/', include('ussd.urls')),
-    path('api/v1/auth/', include('user.urls'))
+    path('api/v1/ussd/', include('ussd.urls'))
 ]

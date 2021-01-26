@@ -23,7 +23,6 @@ class Menu(object):
     def ussd_proceed(self, text):
         cache.set(self.session_id, self.session_data)
         cache.set('user', self.user)
-        print(self.user)
         text = "CON {}".format(text)
         return HttpResponse(text, content_type="text/plain")
 
@@ -39,4 +38,17 @@ class Menu(object):
         1. Register
         2. Exit
         """
+        return self.ussd_proceed(text)
+
+    def start(self):
+        """serves the home menu for returning users"""
+        text = """\
+            Welcome {}, what would you like to do today?
+            1. Request Doctor Engagement
+            2. Book Physical Consultation
+            3. Check Prescription
+            4. Run Tests
+            5. Engage Hospital
+            6. Book Health Taxi
+        """.format(self.user['firstName'])
         return self.ussd_proceed(text)

@@ -85,7 +85,7 @@ class Registration(Menu, Request):
         if len(dob) != 3:
             raise Exception('Invalid date input format')
         self.user['dob'] = datetime.date(int(dob[2]), int(dob[1]), int(dob[0]))
-        text = ''
+        text = 'Your LGA starts with?\n'
         n = 0
         data = {}
         for x, y in lga.items():
@@ -97,7 +97,7 @@ class Registration(Menu, Request):
         return self.ussd_proceed(text)
 
     def display_lga_options(self):
-        text = ''
+        text = 'Select your Local Govt. Area\n'
         data = {}
         lga_dict = self.session_data["lga_dict"]
         for x, y in enumerate(lga_dict[self.user_option]):
@@ -108,7 +108,7 @@ class Registration(Menu, Request):
         return self.ussd_proceed(text)
 
     def get_town(self):
-        text = ""
+        text = "Slect a district closest to you\n"
         data = {}
         lga_dict = self.session_data["lga_dict"]
         self.user['lga'] = list(lga_dict[self.user_option].keys())[0]
@@ -123,7 +123,7 @@ class Registration(Menu, Request):
         return self.ussd_proceed(text)
 
     def get_hospital(self):
-        text = ""
+        text = "Select your preferred hospital\n"
         data = {}
         town_dict = self.session_data["town_dict"]
         self.user['town'] = town_dict[self.user_option]
@@ -137,7 +137,7 @@ class Registration(Menu, Request):
         return self.ussd_proceed(text)
 
     def get_pharmacy(self):
-        text = ""
+        text = "Select your preferred pharmacy\n"
         data = {}
         hospital_dict = self.session_data["hospital_dict"]
         self.user['hospital'] = hospital_dict[self.user_option]
@@ -150,7 +150,7 @@ class Registration(Menu, Request):
         return self.ussd_proceed(text)
 
     def get_laboratory(self):
-        text = ""
+        text = "Select your preferred laboratory\n"
         data = {}
         pharmacy_dict = self.session_data["pharmacy_dict"]
         self.user['pharmacy'] = pharmacy_dict[self.user_option]
