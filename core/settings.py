@@ -27,20 +27,15 @@ SECRET_KEY = '7et@t7qd$5ijb(j75m)5tljv9ygwdwb$^*%uc4#da2z!0vu4s4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["ee737002a1dc.ngrok.io", "localhost"]
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'drf_yasg',
-    'user'
+    'django.contrib.admin', 'django.contrib.auth',
+    'django.contrib.contenttypes', 'django.contrib.sessions',
+    'django.contrib.messages', 'django.contrib.staticfiles', 'rest_framework',
+    'drf_yasg', 'ussd'
 ]
 
 MIDDLEWARE = [
@@ -87,6 +82,10 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 CACHE_TTL = 1800  # 3minutes
 
+BASE_URL = os.environ.get('STAGING_SERVER', 'https://oyo-tm.herokuapp.com')
+if os.environ.get('ENVIRONMENT', 'DEVELOPMENT') == 'PRODUCTION':
+    BASE_URL = ''
+
 # AFTK_USERNAME = os.environ.get("AFRICA_TALKING_USERNAME", "username")
 # AFTK_API_KEY = os.environ.get("AFRICA_TALKING_API_KEY", "c520ef817a2e64fc9b75e73313e2dad0a976a31bfbbff55aafeaca8d7a2a6129")
 
@@ -114,16 +113,20 @@ if os.environ.get('DEBUG', DEBUG) == True:
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -146,4 +149,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Custom user model
-AUTH_USER_MODEL = "user.User"
+# AUTH_USER_MODEL = "user.User"

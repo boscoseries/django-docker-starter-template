@@ -1,49 +1,89 @@
-import os
+import datetime
+from django.core.cache import cache
 from django.shortcuts import render
-from rest_framework import status
-from rest_framework.decorators import api_view
-from django.conf import settings
+from rest_framework import viewsets
+from django.contrib.auth import get_user_model
+
+from .serializers import USSDSerializer
 from urllib.parse import unquote
 from django.http import HttpResponse
-from rest_framework.response import Response
+from .register import Registration
+from .consult import Consultation
+from ussd.requests import Request
+
+req = Request(base_url=None)
 
 
-# Create your views here.
+class USSDViewsets(viewsets.ModelViewSet):
+    queryset = get_user_model().objects.all()
+    serializer_class = USSDSerializer
+    http_method_names = ['get', 'post']
 
-response = ''
+    def create(self, request, *args, **kwargs):
 
-@api_view(['GET', 'POST'])
-def get_ussd(request):
+        url_params = unquote(request.body.decode("utf"))
+        request_dict = dict((x.strip(), y.strip())
+                            for x, y in (element.split('=')
+                                         for element in url_params.split('&')))
 
-  url_params = unquote(request.body.decode("utf"))
-  request_dict = dict((x.strip(), y.strip())
-             for x, y in (element.split('=')
-             for element in url_params.split('&')))
+        session_id = request_dict.get("sessionId", None)
+        service_code = request_dict.get("serviceCode", None)
+        phone_number = request_dict.get("phoneNumber", None)
+        network_code = request_dict.get('networkCode', None)
+        text = request_dict.get('text', None)
 
-  # print(request_dict)
+        session = cache.get(session_id)
+        session_data = {}
 
-  session_id = request_dict.get("sessionId", None)
-  service_code = request_dict.get("serviceCode", None)
-  phone_number = request_dict.get("phoneNumber", None)
-  network_code = request_dict.get('networkCode', None)
-  text = request_dict.get('text', None)
+        if session is None:
+            session_data['level'] = 0
+            cache.set(session_id, session_data)
+            cache.set("user", {"phone": phone_number})
+        else:
+            session_data = session
 
+        user_option = text.split('*')[-1]
+        citizen = req.make_request('post',
+                                   '/citizen',
+                                   data={
+                                       "action": "check-unique",
+                                       "phone": phone_number
+                                   })
 
-  response = None
-  if text == '' or text is None:
-    response  = "CON What would you want to check \n"
-    response += "1. My Account \n"
-    response += "2. My phone number"
-  elif text == '1':
-    response = "CON Choose account information you want to view \n"
-    response += "1. Account number \n"
-    response += "2. Account balance"
-  elif text == '1*1':
-    accountNumber  = "ACC1001"
-    response = "END Your account number is " + accountNumber
-  elif text == '1*2':
-    balance  = "KES 10,000"
-    response = "END Your balance is " + balance
-  elif text == '2':
-    response = "END This is your phone number " + "phone_number"
-  return HttpResponse(response, content_type="text/plain")
+        level = int(session_data.get('level'))
+        try:
+            if citizen['unique']:
+                register = Registration(session_id=session_id,
+                                        session_data=session_data,
+                                        user_option=user_option,
+                                        user=cache.get('user'),
+                                        phone_number=phone_number,
+                                        level=level,
+                                        base_url=None)
+                if level == 0:
+                    session_data['level'] = 1
+                    return register.home()
+
+                if level >= 1:
+                    return register.execute()
+                raise Exception('Something went wrong!')
+
+            if not citizen['unique']:
+                consult = Consultation(session_id=session_id,
+                                       session_data=session_data,
+                                       user_option=user_option,
+                                       user=citizen['data'][0],
+                                       phone_number=phone_number,
+                                       level=level,
+                                       base_url=None)
+                if level == 0:
+                    session_data['level'] = 1
+                    return consult.start()
+
+                if level >= 1:
+                    return consult.execute()
+                raise Exception('Something went wrong!')
+
+        except Exception as e:
+            return HttpResponse(str(e), content_type="text/plain")
+            cache.delete(session_id)
