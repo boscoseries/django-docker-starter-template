@@ -1,39 +1,42 @@
-import json
-
-# from flask import make_response, current_app
 from django.http import HttpResponse
-
-# from ..database import redisfrom
 from django.core.cache import cache
 
+
 class Menu(object):
-    def __init__(self, session_id, session, user, user_option, phone=None, level=None):
-        self.session = session
+    def __init__(self,
+                 session_id,
+                 session_data,
+                 user_option,
+                 user,
+                 phone_number=None,
+                 level=None):
+        self.session_data = session_data
         self.session_id = session_id
         self.user = user
         self.user_option = user_option
-        self.phone = phone
+        self.phone_number = phone_number
         self.level = level
 
-    def execute(self):
+    def error(self):
         raise NotImplementedError
 
-    def ussd_proceed(self, menu_text):
-        cache.set(self.session_id, self.session)
-        menu_text = "CON {}".format(menu_text)
-        return HttpResponse(menu_text, content_type="text/plain")
+    def ussd_proceed(self, text):
+        cache.set(self.session_id, self.session_data)
+        cache.set('user', self.user)
+        print(self.user)
+        text = "CON {}".format(text)
+        return HttpResponse(text, content_type="text/plain")
 
-    def ussd_end(self, menu_text):
+    def ussd_end(self, text):
         cache.delete(self.session_id)
-        menu_text = "END {}".format(menu_text)
-        return HttpResponse(menu_text, content_type="text/plain")
+        text = "END {}".format(text)
+        return HttpResponse(text, content_type="text/plain")
 
     def home(self):
         """serves the home menu"""
-        menu_text = """
+        text = """\
         Welcome to Oyo State Tele-medicine Service
         1. Register
         2. Exit
         """
-        self.session['level'] = 1
-        return self.ussd_proceed(menu_text)
+        return self.ussd_proceed(text)

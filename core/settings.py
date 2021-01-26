@@ -32,10 +32,16 @@ ALLOWED_HOSTS = ["9f86b1646257.ngrok.io", "localhost"]
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin', 'django.contrib.auth',
-    'django.contrib.contenttypes', 'django.contrib.sessions',
-    'django.contrib.messages', 'django.contrib.staticfiles', 'rest_framework',
-    'drf_yasg', 'user', 'ussd'
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'rest_framework',
+    'drf_yasg',
+    'user',
+    'ussd'
 ]
 
 MIDDLEWARE = [
@@ -84,7 +90,7 @@ CACHE_TTL = 1800  # 3minutes
 
 BASE_URL = os.environ.get('STAGING_SERVER', 'https://oyo-tm.herokuapp.com')
 if os.environ.get('ENVIRONMENT', 'DEVELOPMENT') == 'PRODUCTION':
-    BASE_URL = 'https://oyo-tm.com'
+    BASE_URL = ''
 
 # AFTK_USERNAME = os.environ.get("AFRICA_TALKING_USERNAME", "username")
 # AFTK_API_KEY = os.environ.get("AFRICA_TALKING_API_KEY", "c520ef817a2e64fc9b75e73313e2dad0a976a31bfbbff55aafeaca8d7a2a6129")
