@@ -64,9 +64,11 @@ class Registration(Menu, Request):
         name = self.user_option.split('+')
         if len(name) < 2:
             raise Exception('Provide your fullname')
-        self.user['lastName'] = name[0]
-        self.user['firstName'] = name[1]
-        self.user['middleName'] = name[2] if len(name) > 2 else None
+        self.user.update({
+            "lastName": name[0],
+            "firstName": name[1],
+            "middleName": name[2] if len(name) > 2 else None
+        })
         self.session_data['level'] = 3
         return self.ussd_proceed(text)
 
