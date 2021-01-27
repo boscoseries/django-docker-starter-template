@@ -142,7 +142,7 @@ class Registration(Menu, Request):
         text = "Select your preferred pharmacy\n"
         data = {}
         hospital_dict = self.session_data["hospital_dict"]
-        self.user['hospital'] = hospital_dict[self.user_option]
+        self.user['pref_hospital'] = hospital_dict[self.user_option]
         pharmacies = self.make_request("get", "/pharmacy")
         for x, y in enumerate(pharmacies['data']):
             text += f"{x+1}. {y['name']}\n"
@@ -155,7 +155,7 @@ class Registration(Menu, Request):
         text = "Select your preferred laboratory\n"
         data = {}
         pharmacy_dict = self.session_data["pharmacy_dict"]
-        self.user['pharmacy'] = pharmacy_dict[self.user_option]
+        self.user['pref_pharmacy'] = pharmacy_dict[self.user_option]
         laboratories = self.make_request("get", "/laboratory")
         for x, y in enumerate(laboratories['data']):
             text += f"{x+1}. {y['name']}\n"
@@ -166,7 +166,7 @@ class Registration(Menu, Request):
 
     def create_citizen(self):
         laboratory_dict = self.session_data["pharmacy_dict"]
-        self.user['laboratory'] = laboratory_dict[self.user_option]
+        self.user['pref_laboratory'] = laboratory_dict[self.user_option]
         self.user['phone'] = self.phone_number
         citizen = self.make_request("post", "/citizen", self.user)
         return self.ussd_end("""
