@@ -64,9 +64,11 @@ class Registration(Menu, Request):
         name = self.user_option.split('+')
         if len(name) < 2:
             raise Exception('Provide your fullname')
-        self.user['lastName'] = name[0]
-        self.user['firstName'] = name[1]
-        self.user['middleName'] = name[2] if len(name) > 2 else None
+        self.user.update({
+            "lastName": name[0],
+            "firstName": name[1],
+            "middleName": name[2] if len(name) > 2 else None
+        })
         self.session_data['level'] = 3
         return self.ussd_proceed(text)
 
@@ -140,7 +142,7 @@ class Registration(Menu, Request):
         text = "Select your preferred pharmacy\n"
         data = {}
         hospital_dict = self.session_data["hospital_dict"]
-        self.user['hospital'] = hospital_dict[self.user_option]
+        self.user['pref_hospital'] = hospital_dict[self.user_option]
         pharmacies = self.make_request("get", "/pharmacy")
         for x, y in enumerate(pharmacies['data']):
             text += f"{x+1}. {y['name']}\n"
@@ -153,7 +155,7 @@ class Registration(Menu, Request):
         text = "Select your preferred laboratory\n"
         data = {}
         pharmacy_dict = self.session_data["pharmacy_dict"]
-        self.user['pharmacy'] = pharmacy_dict[self.user_option]
+        self.user['pref_pharmacy'] = pharmacy_dict[self.user_option]
         laboratories = self.make_request("get", "/laboratory")
         for x, y in enumerate(laboratories['data']):
             text += f"{x+1}. {y['name']}\n"
@@ -164,7 +166,7 @@ class Registration(Menu, Request):
 
     def create_citizen(self):
         laboratory_dict = self.session_data["pharmacy_dict"]
-        self.user['laboratory'] = laboratory_dict[self.user_option]
+        self.user['pref_laboratory'] = laboratory_dict[self.user_option]
         self.user['phone'] = self.phone_number
         citizen = self.make_request("post", "/citizen", self.user)
         return self.ussd_end("""

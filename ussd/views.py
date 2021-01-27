@@ -8,7 +8,7 @@ from .serializers import USSDSerializer
 from urllib.parse import unquote
 from django.http import HttpResponse
 from .register import Registration
-from .consult import Consultation
+from ussd.engagement import Doctor
 from ussd.requests import Request
 
 req = Request(base_url=None)
@@ -35,14 +35,6 @@ class USSDViewsets(viewsets.ModelViewSet):
         session = cache.get(session_id)
         session_data = {}
 
-        if session is None:
-            session_data['level'] = 0
-            cache.set(session_id, session_data)
-            cache.set("user", {"phone": phone_number})
-        else:
-            session_data = session
-
-        user_option = text.split('*')[-1]
         citizen = req.make_request('post',
                                    '/citizen',
                                    data={
@@ -50,16 +42,37 @@ class USSDViewsets(viewsets.ModelViewSet):
                                        "phone": phone_number
                                    })
 
+        if session is None:
+            session_data['level'] = 0
+
+            session_data[
+                'engagement'] = True if not citizen['unique'] else None
+            session_data['menu'] = 'home' if not citizen['unique'] else None
+            cache.set(session_id, session_data)
+
+            cache.set("user", {"phone": phone_number})
+        else:
+            session_data = session
+
+        user_option = text.split('*')[-1]
+
         level = int(session_data.get('level'))
+
+        data = {
+            "session_id": session_id,
+            "session_data": session_data,
+            "user_option": user_option,
+            "user": citizen['data'][0],
+            "phone_number": phone_number,
+            "level": level,
+            "base_url": None
+        }
+
+        print(session_data, user_option)
+
         try:
-            if citizen['unique']:
-                register = Registration(session_id=session_id,
-                                        session_data=session_data,
-                                        user_option=user_option,
-                                        user=cache.get('user'),
-                                        phone_number=phone_number,
-                                        level=level,
-                                        base_url=None)
+            if not session_data['engagement']:
+                register = Registration(**data)
                 if level == 0:
                     session_data['level'] = 1
                     return register.home()
@@ -68,20 +81,43 @@ class USSDViewsets(viewsets.ModelViewSet):
                     return register.execute()
                 raise Exception('Something went wrong!')
 
-            if not citizen['unique']:
-                consult = Consultation(session_id=session_id,
-                                       session_data=session_data,
-                                       user_option=user_option,
-                                       user=citizen['data'][0],
-                                       phone_number=phone_number,
-                                       level=level,
-                                       base_url=None)
-                if level == 0:
-                    session_data['level'] = 1
-                    return consult.start()
+            if session_data['engagement']:
+                doctor = Doctor(**data)
 
-                if level >= 1:
-                    return consult.execute()
+                if session_data.get('menu') == 'home':
+                    session_data.update({"base": True, "menu": None})
+                    return doctor.start()
+
+                if (session_data.get('menu')
+                        == 'doctor') or (session_data['base'] and
+                                         (user_option == "1")):
+                    return doctor.execute()
+
+                if (session_data.get('menu')
+                        == 'booking') or (session_data['base'] and
+                                          (user_option == "3")):
+                    return doctor.start()
+
+                if (session_data.get('menu')
+                        == 'prescription') or (session_data['base'] and
+                                               (user_option == "3")):
+                    return doctor.start()
+
+                if (session_data.get('menu')
+                        == 'tests') or (session_data['base'] and
+                                        (user_option == "4")):
+                    return doctor.start()
+
+                if (session_data.get('menu')
+                        == 'hospital') or (session_data['base'] and
+                                           (user_option == "5")):
+                    return doctor.start()
+
+                if (session_data.get('menu')
+                        == 'taxi') or (session_data['base'] and
+                                       (user_option == "6")):
+                    return doctor.start()
+
                 raise Exception('Something went wrong!')
 
         except Exception as e:
