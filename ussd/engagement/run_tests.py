@@ -2,7 +2,7 @@ from ussd.base_menu import Menu
 from ussd.requests import Request
 
 
-class Prescribe(Menu, Request):
+class Tests(Menu, Request):
     def __init__(self, session_id, session_data, user_option, user,
                  phone_number, level, base_url):
         Menu.__init__(self, session_id, session_data, user_option, user,

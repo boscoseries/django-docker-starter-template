@@ -9,18 +9,21 @@ class Doctor(Menu, Request):
                       phone_number, level)
         Request.__init__(self, base_url)
 
-    def request_doctor(self):
+    def close_session(self):
         text = """
             Received.
             Doctor will get back to you.
         """
-        consultation = self.make_request('post', '/consultation-requests')
+        engage_doctor = self.make_request('post',
+                                          '/consultation-requests',
+                                          data={"citizen": self.user['_id']})
+        print(engage_doctor)
         return self.ussd_end(text)
 
     def execute(self):
         try:
             menu = {
-                0: self.request_doctor,
+                0: self.close_session,
             }
             return menu.get(self.level)()
         except Exception as e:

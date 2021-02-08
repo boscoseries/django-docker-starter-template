@@ -8,7 +8,7 @@ from .serializers import USSDSerializer
 from urllib.parse import unquote
 from django.http import HttpResponse
 from .register import Registration
-from ussd.engagement import Doctor
+from ussd.engagement import (Doctor, Consult, Prescribe, Hospital, Tests)
 from ussd.requests import Request
 
 req = Request(base_url=None)
@@ -49,26 +49,29 @@ class USSDViewsets(viewsets.ModelViewSet):
                 'engagement'] = True if not citizen['unique'] else None
             session_data['menu'] = 'home' if not citizen['unique'] else None
             cache.set(session_id, session_data)
-
-            cache.set("user", {"phone": phone_number})
+            user = cache.set("user", {"phone": phone_number})
         else:
             session_data = session
 
         user_option = text.split('*')[-1]
-
         level = int(session_data.get('level'))
 
         data = {
-            "session_id": session_id,
-            "session_data": session_data,
-            "user_option": user_option,
-            "user": citizen['data'][0],
-            "phone_number": phone_number,
-            "level": level,
-            "base_url": None
+            "session_id":
+            session_id,
+            "session_data":
+            session_data,
+            "user_option":
+            user_option,
+            "user":
+            citizen['data'][0] if not citizen['unique'] else cache.get("user"),
+            "phone_number":
+            phone_number,
+            "level":
+            level,
+            "base_url":
+            None
         }
-
-        print(session_data, user_option)
 
         try:
             if not session_data['engagement']:
@@ -83,39 +86,53 @@ class USSDViewsets(viewsets.ModelViewSet):
 
             if session_data['engagement']:
                 doctor = Doctor(**data)
-
-                if session_data.get('menu') == 'home':
-                    session_data.update({"base": True, "menu": None})
+                # print("----->SESSION DATA", session_data)
+                if session_data.get('menu') == 'home' or (user_option == '99'):
+                    session_data.update({
+                        "level": 0,
+                        "base": True,
+                        "menu": None
+                    })
                     return doctor.start()
 
                 if (session_data.get('menu')
-                        == 'doctor') or (session_data['base'] and
-                                         (user_option == "1")):
+                        == 'engage_doctor') or (session_data['base'] and
+                                                (user_option == "1")):
+                    # print('entered 1')
                     return doctor.execute()
 
                 if (session_data.get('menu')
-                        == 'booking') or (session_data['base'] and
-                                          (user_option == "3")):
-                    return doctor.start()
+                        == 'phys._consultation') or (session_data['base'] and
+                                                     (user_option == "2")):
+                    # print('entered 2')
+                    consult = Consult(**data)
+                    return consult.execute()
 
                 if (session_data.get('menu')
                         == 'prescription') or (session_data['base'] and
                                                (user_option == "3")):
-                    return doctor.start()
+                    # print('entered 3')
+                    prescription = Prescribe(**data)
+                    return prescription.execute()
 
                 if (session_data.get('menu')
-                        == 'tests') or (session_data['base'] and
-                                        (user_option == "4")):
-                    return doctor.start()
+                        == 'run_tests') or (session_data['base'] and
+                                            (user_option == "4")):
+                    # print('entered 4')
+                    tests = Tests(**data)
+                    return tests.execute()
 
                 if (session_data.get('menu')
-                        == 'hospital') or (session_data['base'] and
-                                           (user_option == "5")):
-                    return doctor.start()
+                        == 'engage_hospital') or (session_data['base'] and
+                                                  (user_option == "5")):
+                    print('entered 5')
+                    hospital = Hospital(**data)
+                    return hospital.execute()
 
                 if (session_data.get('menu')
-                        == 'taxi') or (session_data['base'] and
-                                       (user_option == "6")):
+                        == 'health_taxi') or (session_data['base'] and
+                                              (user_option == "6")):
+                    # print('entered 6')
                     return doctor.start()
 
                 raise Exception('Something went wrong!')
