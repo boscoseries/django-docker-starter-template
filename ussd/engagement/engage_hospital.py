@@ -47,13 +47,16 @@ class Hospital(Menu, Request):
         hospitals = self.make_request('get', '/hospital')
         n = 1
         for x, y in enumerate(hospitals['data']):
-            n += 1
-            if y['_id'] == self.user['pref_hospital']:
-                pref_hospital += f"1. {y['name']}\n"
-                hospital_dict['1'] = y['_id']
-            else:
-                body += f"{n}. {y['name']}\n"
-                hospital_dict[str(n)] = y['_id']
+            if self.user.get('pref_hospital'):
+                n += 1
+                if y['_id'] == self.user.get('pref_hospital'):
+                    pref_hospital += f"1. {y['name']}\n"
+                    hospital_dict['1'] = y['_id']
+                else:
+                    body += f"{n}. {y['name']}\n"
+                    hospital_dict[str(n)] = y['_id']
+            pref_hospital += f"{x+1}. {y['name']}\n"
+            hospital_dict[str(x+1)] = y['_id']
         text = pref_hospital + body
 
         self.session_data.update({
@@ -66,7 +69,7 @@ class Hospital(Menu, Request):
     def engage_doctor(self):
         hospital_option = self.session_data['hospital_dict'][self.user_option]
         text_unavailable = """
-        Doctor is not available at your preferred Hospital,
+        Doctor is not available at your preferred hospital,
         would you like to engage another hospital?
         1. Yes
         2. No

@@ -14,10 +14,6 @@ class Consult(Menu, Request):
             Received.
             Doctor will get back to you.
         """
-        # consultation = self.make_request('post',
-        #                                  '/consultation-requests',
-        #                                  data={"citizen": self.user['_id']})
-        # print(consultation)
         return self.ussd_end(text)
 
     def execute(self):

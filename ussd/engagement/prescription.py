@@ -12,7 +12,6 @@ class Prescribe(Menu, Request):
             self.level = int(self.user_option)
 
     def home(self):
-        # print('-------->HOME', self.session_data)
         text = """\
         What do yo want to do?
       1. Check Prescription
@@ -28,65 +27,48 @@ class Prescribe(Menu, Request):
         return self.ussd_proceed(text)
 
     def all_prescription(self):
-        # self.user['_id'] = "6000e703539178242498c54b"
-        body = """\
+        text = """\
             All your Prescription:
         """
         prescription = self.make_request(
             'get', f"/medication?citizen={self.user['_id']}")
         for x, y in enumerate(prescription['data']):
-            body += f"{x+1}. {y['medication']}\n"
+            text += f"{x+1}. {y['medication']}\n"
         if prescription['total'] == 0:
-            body = "\nYou have no prescription.\n"
-
-        text = """\
-            {}
-            00. Back
-        """.format(body)
+            text = "\nYou have no prescription.\n"
+        text += "00.Back"
         self.session_data['level'] = 0
         return self.ussd_proceed(text)
 
     def fulfilled_prescription(self):
-        # self.user['_id'] = "6000e703539178242498c54b"
-        body = """\
+        text = """\
             Available at your Pharmacy
         """
         prescription = self.make_request(
             'get', f"/medication?citizen={self.user['_id']}&fulfilled=true")
         for x, y in enumerate(prescription['data']):
-            body += f"{x+1}. {y['medication']}\n"
+            text += f"{x+1}. {y['medication']}\n"
         if prescription['total'] == 0:
-            body = "\nYou have no prescription.\n"
-
-        text = """\
-            {}
-            00. Back
-        """.format(body)
+            text = "\nYou have no prescription.\n"
+        text += "00.Back"
         self.session_data['level'] = 0
         return self.ussd_proceed(text)
 
     def unavailable_prescription(self):
-        # self.user['_id'] = "6000e703539178242498c54b"
-        body = """\
+        text = """\
              Un-available at your Pharmacy
         """
-        print(self.user["_id"])
         prescription = self.make_request(
             'get', f"/medication?citizen={self.user['_id']}&fulfilled=false")
         for x, y in enumerate(prescription['data']):
-            body += f"{x+1}. {y['medication']}\n"
+            text += f"{x+1}. {y['medication']}\n"
         if prescription['total'] == 0:
-            body += "\nYou have no prescription.\n"
-
-        text = """\
-            {}
-            00. Back
-        """.format(body)
+            text += "\nYou have no prescription.\n"
+        text += "00.Back"
         self.session_data['level'] = 0
         return self.ussd_proceed(text)
 
     def close_session(self):
-        print('entered close session')
         text = """\
             Received.
             Pharmacy will get back to you.
