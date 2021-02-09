@@ -78,7 +78,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis-14356.c89.us-east-1-3.ec2.cloud.redislabs.com:14356",
+        "LOCATION":
+        "redis://:s8Q5jL0vDL2O8eGXrUtL1uFEZy9dj3yE@redis-14356.c89.us-east-1-3.ec2.cloud.redislabs.com:14356",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
