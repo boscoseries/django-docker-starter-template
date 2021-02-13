@@ -94,8 +94,8 @@ BASE_URL = os.environ.get('STAGING_SERVER', 'https://oyo-tm.herokuapp.com')
 if os.environ.get('ENVIRONMENT', 'DEVELOPMENT') == 'PRODUCTION':
     BASE_URL = ''
 
-# AFTK_USERNAME = os.environ.get("AFRICA_TALKING_USERNAME", "username")
-# AFTK_API_KEY = os.environ.get("AFRICA_TALKING_API_KEY", "c520ef817a2e64fc9b75e73313e2dad0a976a31bfbbff55aafeaca8d7a2a6129")
+# AFTK_USERNAME = os.environ.get("AFRICA_TALKING_USERNAME", "sandbox")
+# AFTK_API_KEY = os.environ.get("AFRICA_TALKING_API_KEY", "a03f07a8c270560577ef8860bad3970342cdef860ab500afae28b25748fc1f56")
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

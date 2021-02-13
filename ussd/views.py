@@ -8,7 +8,7 @@ from .serializers import USSDSerializer
 from urllib.parse import unquote
 from django.http import HttpResponse
 from .register import Registration
-from ussd.engagement import (Doctor, Consult, Prescribe, Hospital, Tests)
+from ussd.engagement import (Doctor, Consult, Prescribe, Hospital, LabTests)
 from ussd.requests import Request
 
 req = Request(base_url=None)
@@ -39,7 +39,7 @@ class USSDViewsets(viewsets.ModelViewSet):
                                    '/citizen',
                                    data={
                                        "action": "check-unique",
-                                       "phone": phone_number
+                                       "phone": phone_number.replace('+234', '0')
                                    })
 
         if session is None:
@@ -93,32 +93,26 @@ class USSDViewsets(viewsets.ModelViewSet):
                     return doctor.execute()
 
                 if (session_data.get('menu')
-                        == 'phys._consultation') or (session_data['base'] and
-                                                     (user_option == "2")):
-                    consult = Consult(**data)
-                    return consult.execute()
-
-                if (session_data.get('menu')
                         == 'prescription') or (session_data['base'] and
-                                               (user_option == "3")):
+                                               (user_option == "2")):
                     prescription = Prescribe(**data)
                     return prescription.execute()
 
                 if (session_data.get('menu')
-                        == 'run_tests') or (session_data['base'] and
-                                            (user_option == "4")):
-                    tests = Tests(**data)
-                    return tests.execute()
+                        == 'lab_tests') or (session_data['base'] and
+                                            (user_option == "3")):
+                    lab_tests = LabTests(**data)
+                    return lab_tests.execute()
 
                 if (session_data.get('menu')
                         == 'engage_hospital') or (session_data['base'] and
-                                                  (user_option == "5")):
+                                                  (user_option == "4")):
                     hospital = Hospital(**data)
                     return hospital.execute()
 
                 if (session_data.get('menu')
                         == 'health_taxi') or (session_data['base'] and
-                                              (user_option == "6")):
+                                              (user_option == "5")):
                     return doctor.start()
 
                 raise Exception('Something went wrong!')

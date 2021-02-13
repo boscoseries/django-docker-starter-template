@@ -45,10 +45,9 @@ class Menu(object):
         text = """\
             Welcome {}, what would you like to do today?
             1. Request Doctor Engagement
-            2. Book Physical Consultation
-            3. Check Prescription
-            4. Run Tests
-            5. Engage Hospital
-            6. Book Health Taxi
+            2. Check Prescription
+            3. Lab Test
+            4. Engage Hospital
+            5. Book Health Taxi
         """.format(self.user['firstName'])
         return self.ussd_proceed(text)

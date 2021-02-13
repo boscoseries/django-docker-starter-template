@@ -37,37 +37,37 @@ class Hospital(Menu, Request):
         })
         return self.ussd_proceed(text)
 
-    def hospital_choices(self):
-        pref_hospital = """\
-        Choose your preferred hospital
-        """
-        body = """\
-        """
-        hospital_dict = {}
-        hospitals = self.make_request('get', '/hospital')
-        n = 1
-        for x, y in enumerate(hospitals['data']):
-            if self.user.get('pref_hospital'):
-                n += 1
-                if y['_id'] == self.user.get('pref_hospital'):
-                    pref_hospital += f"1. {y['name']}\n"
-                    hospital_dict['1'] = y['_id']
-                else:
-                    body += f"{n}. {y['name']}\n"
-                    hospital_dict[str(n)] = y['_id']
-            pref_hospital += f"{x+1}. {y['name']}\n"
-            hospital_dict[str(x+1)] = y['_id']
-        text = pref_hospital + body
+    # def hospital_choices(self):
+    #     pref_hospital = """\
+    #     Choose your preferred hospital
+    #     """
+    #     body = """\
+    #     """
+    #     hospital_dict = {}
+    #     hospitals = self.make_request('get', '/hospital')
+    #     n = 1
+    #     for x, y in enumerate(hospitals['data']):
+    #         if self.user.get('pref_hospital'):
+    #             n += 1
+    #             if y['_id'] == self.user.get('pref_hospital'):
+    #                 pref_hospital += f"1. {y['name']}\n"
+    #                 hospital_dict['1'] = y['_id']
+    #             else:
+    #                 body += f"{n}. {y['name']}\n"
+    #                 hospital_dict[str(n)] = y['_id']
+    #         else: pref_hospital += f"{x+1}. {y['name']}\n"
+    #         hospital_dict[str(x + 1)] = y['_id']
+    #     text = pref_hospital + body
 
-        self.session_data.update({
-            "level": 2,
-            "hospital_dict": hospital_dict,
-            "service_choice": self.user_option
-        })
-        return self.ussd_proceed(text)
+    #     self.session_data.update({
+    #         "level": 2,
+    #         "hospital_dict": hospital_dict,
+    #         "service_choice": self.user_option
+    #     })
+    #     return self.ussd_proceed(text)
 
     def engage_doctor(self):
-        hospital_option = self.session_data['hospital_dict'][self.user_option]
+        # hospital_option = self.session_data['hospital_dict'][self.user_option]
         text_unavailable = """
         Doctor is not available at your preferred hospital,
         would you like to engage another hospital?
@@ -77,8 +77,7 @@ class Hospital(Menu, Request):
         text = """\
             Available at your Pharmacy:
         """
-        doctor = self.make_request(
-            'get', f"/doctor?availability=false&hospital={hospital_option}")
+        doctor = self.make_request('get', f"/doctor?availability=true")
         print(doctor)
         if doctor['total'] == 0:
             self.session_data.update({"level": 101})
@@ -100,26 +99,21 @@ class Hospital(Menu, Request):
         return self.ussd_end(text)
 
     def execute(self):
-        if self.level == 2:
-            if self.session_data.get('service_choice') == '1':
-                self.level = 2
-            elif self.session_data.get('service_choice') == '2':
-                self.level = 3
-            else:
-                self.level = 4
+        if self.level == 1:
+            self.level = int(self.user_option)
         if self.level == 101:
             if self.user_option == '1':
                 self.level = 1
-            else:
-                self.level = 5
+            if self.user_option == '2':
+                self.level = 4
         try:
             menu = {
                 0: self.home,
-                1: self.hospital_choices,
-                2: self.engage_doctor,
-                3: self.engage_pharmacy,
-                4: self.engage_laboratory,
-                5: self.end_session,
+                # 1: self.hospital_choices,
+                1: self.engage_doctor,
+                2: self.engage_pharmacy,
+                3: self.engage_laboratory,
+                4: self.end_session,
             }
             return menu.get(self.level)()
         except Exception as e:
