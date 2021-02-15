@@ -5,15 +5,15 @@ from django.core.cache import cache
 from .requests import Request
 
 lga = {
-    'A': ["Afijio", "Atiba", "Atisbo", "Akinyele"],
+    "A": [{"Afijio": "afj"}, {"Atiba": "atb"}, {"Atisbo": "ats"}, {"Akinyele": "aki"}],
     "Iba": [
-        "Ibadan North", "Ibadan North East", "Ibadan North West",
-        "Ibadan South East", "Ibadan South West", "Ibarapa North",
-        "Ibarapa East", "Ibarapa Central"
+        {"Ibadan North": "ibn"}, {"Ibadan North East": "ine"}, {"Ibadan North West": "inw"},
+        {"Ibadan South East": "ise"}, {"Ibadan South West": "isw"}, {"Ibarapa North": "ipn"},
+        {"Ibarapa East": "ipe"}, {"Ibarapa Central": "ipc"}
     ],
-    "K, L, E": ["Kajola", "Lagelu", "Egbeda"],
-    "It, Is, Iw, Id, Ir": ["Itesiwaju", "Iwajowa", "Iseyin", "Ido", "Irepo"],
-    "Og": ["Ogbomosho South", "Ogbomosho North", "Ogo Oluwa"],
+    "K, L, E": [{"Kajola": "kja"}, {"Lagelu": "lge"}, {"Egbeda": "egb"}],
+    "It, Is, Iw, Id, Ir": [{"Itesiwaju": "its"}, {"Iwajowa": "iwj"}, {"Iseyin": "isy"}, {"Ido": "ido"}, {"Irepo": "irp"}],
+    "Og": [{"Ogbomosho South": "ogs"}, {"Ogbomosho North": "ogn"}, {"Ogo Oluwa": "ogl"}],
     "Oyo, Or, Ol, On, Oo": [{
         "Oyo East": "oye"
     }, {
@@ -29,7 +29,7 @@ lga = {
     }, {
         "Olorunsogo": "olo"
     }],
-    "S": ["Saki East", "Saki West", "Surulere"]
+    "S": [{"Saki East": "ske"}, {"Saki West": "skw"}, {"Surulere": "sru"}]
 }
 
 
@@ -73,7 +73,7 @@ class Registration(Menu, Request):
         return self.ussd_proceed(text)
 
     def get_dob(self):
-        text = """
+        text = """\
     Input Date of Birth
     (DD-MM-YYYY)
   """
@@ -117,6 +117,8 @@ class Registration(Menu, Request):
         lga_dict = self.session_data["lga_dict"]
         threeChar = list(lga_dict[self.user_option].values())[0]
         lga = self.make_request("get", f"/lga?threeChar={threeChar}")
+        if lga['total'] < 1:
+            return self.ussd_end("LGA not found")
         for x, y in enumerate(lga['data'][0]['districts']):
             text += f"{x+1}. {y}\n"
             data.update({str(x + 1): y})
@@ -131,6 +133,8 @@ class Registration(Menu, Request):
         self.user['town'] = town_dict[self.user_option]
 
         hospitals = self.make_request("get", "/hospital")
+        if hospitals['total'] < 1:
+            return self.ussd_end("Hospital not found")
         for x, y in enumerate(hospitals['data']):
             text += f"{x+1}. {y['name']}\n"
             data.update({str(x + 1): y['_id']})
@@ -144,6 +148,8 @@ class Registration(Menu, Request):
         hospital_dict = self.session_data["hospital_dict"]
         self.user['pref_hospital'] = hospital_dict[self.user_option]
         pharmacies = self.make_request("get", "/pharmacy")
+        if pharmacies['total'] < 1:
+            return self.ussd_end("Pharmacy not found")
         for x, y in enumerate(pharmacies['data']):
             text += f"{x+1}. {y['name']}\n"
             data.update({str(x + 1): y['_id']})
@@ -157,6 +163,8 @@ class Registration(Menu, Request):
         pharmacy_dict = self.session_data["pharmacy_dict"]
         self.user['pref_pharmacy'] = pharmacy_dict[self.user_option]
         laboratories = self.make_request("get", "/laboratory")
+        if laboratories['total'] < 1:
+            return self.ussd_end("Laboratory not found")
         for x, y in enumerate(laboratories['data']):
             text += f"{x+1}. {y['name']}\n"
             data.update({str(x + 1): y['_id']})
@@ -169,10 +177,12 @@ class Registration(Menu, Request):
         self.user['pref_laboratory'] = laboratory_dict[self.user_option]
         self.user['phone'] = self.phone_number
         citizen = self.make_request("post", "/citizen", self.user)
-        return self.ussd_end("""
-                                Registration Successful
-                                Thank You!
-                             """)
+        if citizen['_id']:
+            return self.ussd_end("""
+                                    Registration Successful
+                                    Thank You!
+                                """)
+        return self.ussd_end("An error occurred, Try again")
 
     def execute(self):
         try:

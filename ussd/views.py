@@ -32,6 +32,8 @@ class USSDViewsets(viewsets.ModelViewSet):
         network_code = request_dict.get('networkCode', None)
         text = request_dict.get('text', None)
 
+        phone_number = phone_number.replace('+234', '0')
+
         session = cache.get(session_id)
         session_data = {}
 
@@ -39,7 +41,7 @@ class USSDViewsets(viewsets.ModelViewSet):
                                    '/citizen',
                                    data={
                                        "action": "check-unique",
-                                       "phone": phone_number.replace('+234', '0')
+                                       "phone": phone_number
                                    })
 
         if session is None:
