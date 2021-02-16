@@ -83,20 +83,19 @@ class LabTests(Menu, Request):
         return self.ussd_proceed(text)
 
     def process_test_type(self):
-        test_request = self.make_request(
-            'post', "/labrequest", {
-                'labrequest': {
-                    "test": self.user_option,
-                    "fulfilled": False,
-                    "lab_fulfill": None,
-                    "doctor": None,
-                    "citizen": self.user['_id'],
-                    "encounter": None,
-                    "lab_dest": self.user['pref_laboratory'],
-                    "status": "pending",
-                    "lab_action": None
-                }
-            })
+        test_request = self.make_request('POST', "/labrequest", json={
+            'labrequest': {
+                "test": self.user_option,
+                "fulfilled": False,
+                "lab_fulfill": None,
+                "doctor": None,
+                "citizen": self.user['_id'],
+                "encounter": None,
+                "lab_dest": self.user['pref_laboratory'],
+                "status": "pending",
+                "lab_action": None
+            }
+        })
         print(test_request)
         return self.close_session()
 

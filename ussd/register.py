@@ -29,7 +29,7 @@ lga = {
     }, {
         "Olorunsogo": "olo"
     }],
-    "S": [{"Saki East": "ske"}, {"Saki West": "skw"}, {"Surulere": "sru"}]
+    "S": [{"Saki East": "ske"}, {"Saki West": "skw"}, {"Surulere": "sur"}]
 }
 
 
