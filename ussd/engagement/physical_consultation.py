@@ -10,7 +10,7 @@ class Consult(Menu, Request):
         Request.__init__(self, base_url)
 
     def close_session(self):
-        text = """
+        text = """\
             Received.
             Doctor will get back to you.
         """

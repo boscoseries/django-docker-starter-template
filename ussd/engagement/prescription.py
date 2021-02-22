@@ -35,7 +35,7 @@ class Prescribe(Menu, Request):
         for x, y in enumerate(prescription['data']):
             text += f"{x+1}. {y['medication']}\n"
         if prescription['total'] == 0:
-            text = "\nYou have no prescription.\n"
+            text = "You have no prescription.\n"
         text += "00.Back"
         self.session_data['level'] = 0
         return self.ussd_proceed(text)
@@ -49,7 +49,7 @@ class Prescribe(Menu, Request):
         for x, y in enumerate(prescription['data']):
             text += f"{x+1}. {y['medication']}\n"
         if prescription['total'] == 0:
-            text = "\nYou have no prescription.\n"
+            text = "You have no prescription.\n"
         text += "00.Back"
         self.session_data['level'] = 0
         return self.ussd_proceed(text)
@@ -63,7 +63,7 @@ class Prescribe(Menu, Request):
         for x, y in enumerate(prescription['data']):
             text += f"{x+1}. {y['medication']}\n"
         if prescription['total'] == 0:
-            text += "\nYou have no prescription.\n"
+            text += "You have no prescription.\n"
         text += "00.Back"
         self.session_data['level'] = 0
         return self.ussd_proceed(text)
