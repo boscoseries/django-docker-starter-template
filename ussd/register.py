@@ -23,7 +23,7 @@ lga = {
     }, {
         "Oluyole": "olu"
     }, {
-        "Ona Ora": "ono"
+        "Ona Ora": "ona"
     }, {
         "Oorelope": "oor"
     }, {
