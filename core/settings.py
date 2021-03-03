@@ -142,7 +142,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 sentry_sdk.init(
     dsn=
-    "https://4e5c4939cf214930be252cf0da33831a@o539719.ingest.sentry.io/5657496",
+    "https://b2f924667d7b4a1bba9a895f1bc4aed4@o539719.ingest.sentry.io/5659577",
     integrations=[DjangoIntegration()],
     traces_sample_rate=1.0,
 
