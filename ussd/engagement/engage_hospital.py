@@ -25,9 +25,9 @@ class Hospital(Menu, Request):
     def home(self):
         text = """\
             Select a service
-            1. Doctor
-            2. Pharmacy
-            3. Laboratory
+            1. Contact Hospital Doctor
+            2. Contact Hospital Pharmacy
+            3. Contact Hospital Lab
             99. Main Menu
         """
         self.session_data.update({
@@ -36,35 +36,6 @@ class Hospital(Menu, Request):
             "level": 1,
         })
         return self.ussd_proceed(text)
-
-    # def hospital_choices(self):
-    #     pref_hospital = """\
-    #     Choose your preferred hospital
-    #     """
-    #     body = """\
-    #     """
-    #     hospital_dict = {}
-    #     hospitals = self.make_request('get', '/hospital')
-    #     n = 1
-    #     for x, y in enumerate(hospitals['data']):
-    #         if self.user.get('pref_hospital'):
-    #             n += 1
-    #             if y['_id'] == self.user.get('pref_hospital'):
-    #                 pref_hospital += f"1. {y['name']}\n"
-    #                 hospital_dict['1'] = y['_id']
-    #             else:
-    #                 body += f"{n}. {y['name']}\n"
-    #                 hospital_dict[str(n)] = y['_id']
-    #         else: pref_hospital += f"{x+1}. {y['name']}\n"
-    #         hospital_dict[str(x + 1)] = y['_id']
-    #     text = pref_hospital + body
-
-    #     self.session_data.update({
-    #         "level": 2,
-    #         "hospital_dict": hospital_dict,
-    #         "service_choice": self.user_option
-    #     })
-    #     return self.ussd_proceed(text)
 
     def engage_doctor(self):
         # hospital_option = self.session_data['hospital_dict'][self.user_option]
@@ -109,7 +80,6 @@ class Hospital(Menu, Request):
         try:
             menu = {
                 0: self.home,
-                # 1: self.hospital_choices,
                 1: self.engage_doctor,
                 2: self.engage_pharmacy,
                 3: self.engage_laboratory,

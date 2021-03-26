@@ -12,10 +12,10 @@ class LabTests(Menu, Request):
     def home(self):
         text = """\
         What do yo want to do?
-      1. Test List
-      2. Accepted Tests
-      3. Pending Tests
-      4. Run Test
+      1. List of Test
+      2. Tests with price
+      3. Tests without price
+      4. Take a Test
       99. Main Menu
       """
         self.session_data.update({

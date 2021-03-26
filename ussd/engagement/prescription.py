@@ -14,9 +14,9 @@ class Prescribe(Menu, Request):
     def home(self):
         text = """\
         What do yo want to do?
-      1. Medication List
-      2. Fulfilled Prescription
-      3. Un-fulfilled Prescription
+      1. List of Drugs
+      2. Drugs with price
+      3. Drugs without price
       99. Main Menu
       """
         self.session_data.update({

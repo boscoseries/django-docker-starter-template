@@ -44,10 +44,10 @@ class Menu(object):
         """serves the home menu for returning users"""
         text = """\
             Welcome {}, what would you like to do today?
-            1. Request Doctor Engagement
-            2. Check Prescription
-            3. Lab Test
-            4. Engage Hospital
-            5. Book Health Taxi
+            1. Chat with a Doctor
+            2. Check my Drugs
+            3. Check Tests
+            4. Contact Hospital
+            5. Request Health Taxi
         """.format(self.user['firstName'])
         return self.ussd_proceed(text)
