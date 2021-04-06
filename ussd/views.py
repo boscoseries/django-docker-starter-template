@@ -43,6 +43,7 @@ class USSDViewsets(viewsets.ModelViewSet):
                                        "action": "check-unique",
                                        "phone": phone_number
                                    })
+        print('citizen --------------------------------------------------------------------->', citizen)
 
         if session is None:
             session_data['level'] = 0
@@ -68,8 +69,15 @@ class USSDViewsets(viewsets.ModelViewSet):
             "base_url": None
         }
 
-        print('user here ----->', data['user'])
-        # print('user option ----->', data['user_option'])
+        print('''
+              user data ----->
+              ''',
+              data['user'])
+
+        print('''
+              returning user ----->
+              ''',
+              data['session_data']['engagement'])
 
         try:
             if not session_data['engagement']:
@@ -83,6 +91,11 @@ class USSDViewsets(viewsets.ModelViewSet):
                 raise Exception('Something went wrong!')
 
             if session_data['engagement']:
+                print('''
+
+                      entered engagement
+
+                      ''')
                 doctor = Doctor(**data)
                 if session_data.get('menu') == 'home' or (user_option == '99'):
                     session_data.update({

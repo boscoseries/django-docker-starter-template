@@ -8,6 +8,10 @@ class Doctor(Menu, Request):
         Menu.__init__(self, session_id, session_data, user_option, user,
                       phone_number, level)
         Request.__init__(self, base_url)
+        
+        print('''
+              Reached Doctor
+              ''')
 
     def close_session(self):
         text = """\

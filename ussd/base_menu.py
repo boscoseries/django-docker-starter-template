@@ -16,6 +16,12 @@ class Menu(object):
         self.user_option = user_option
         self.phone_number = phone_number
         self.level = level
+        
+        print('''
+
+              Entered start Menu
+
+              ''')
 
     def error(self):
         raise NotImplementedError
