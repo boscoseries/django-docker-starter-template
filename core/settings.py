@@ -29,7 +29,9 @@ SECRET_KEY = '7et@t7qd$5ijb(j75m)5tljv9ygwdwb$^*%uc4#da2z!0vu4s4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "oyo-ussd.herokuapp.com", "localhost"]
+ALLOWED_HOSTS = [
+    "127.0.0.1", "oyo-ussd.herokuapp.com", "localhost", "aeb44fb8ff40.ngrok.io"
+]
 
 # Application definition
 
@@ -93,8 +95,8 @@ SESSION_CACHE_ALIAS = "default"
 CACHE_TTL = 1800  # 3minutes
 
 BASE_URL = os.environ.get('STAGING_SERVER', 'https://oyo-tm.herokuapp.com')
-if os.environ.get('ENVIRONMENT', 'DEVELOPMENT') == 'PRODUCTION':
-    BASE_URL = ''
+# if os.environ.get('ENVIRONMENT', 'development') == 'PRODUCTION':
+#     BASE_URL = ''
 
 # AFTK_USERNAME = os.environ.get("AFRICA_TALKING_USERNAME", "sandbox")
 # AFTK_API_KEY = os.environ.get("AFRICA_TALKING_API_KEY", "a03f07a8c270560577ef8860bad3970342cdef860ab500afae28b25748fc1f56")
@@ -145,6 +147,8 @@ sentry_sdk.init(
     "https://b2f924667d7b4a1bba9a895f1bc4aed4@o539719.ingest.sentry.io/5659577",
     integrations=[DjangoIntegration()],
     traces_sample_rate=1.0,
+    environment=os.environ.get('ENVIRONMENT', 'production'),
+    request_bodies='always',
 
     # If you wish to associate users to errors (assuming you are using
     # django.contrib.auth) you may enable sending PII data.

@@ -3,6 +3,7 @@ import datetime
 from .base_menu import Menu
 from django.core.cache import cache
 from .requests import Request
+from sentry_sdk import capture_exception
 
 lga = {
     "A": [{"Afijio": "afj"}, {"Atiba": "atb"}, {"Atisbo": "ats"}, {"Akinyele": "aki"}],
@@ -64,6 +65,7 @@ class Registration(Menu, Request):
         name = self.user_option.split('+')
         if len(name) < 2:
             raise Exception('Provide your fullname')
+        # print('name and user option', name, self.user_option)
         self.user.update({
             "lastName": name[0],
             "firstName": name[1],
@@ -176,6 +178,7 @@ class Registration(Menu, Request):
         laboratory_dict = self.session_data["pharmacy_dict"]
         self.user['pref_laboratory'] = laboratory_dict[self.user_option]
         self.user['phone'] = self.phone_number
+        # print(self.user)
         citizen = self.make_request("post", "/citizen", self.user)
         if citizen['_id']:
             return self.ussd_end("""
@@ -204,4 +207,5 @@ class Registration(Menu, Request):
                 }
                 return menu.get(self.level)()
         except Exception as e:
+            capture_exception(e)
             return self.ussd_end(str(e))
