@@ -69,10 +69,10 @@ class USSDViewsets(viewsets.ModelViewSet):
             "base_url": None
         }
 
-        print('''
-              user data ----->
-              ''',
-              data['user'])
+        # print('''
+        #       user data ----->
+        #       ''',
+        #       data['user'])
 
         print('''
               returning user ----->
