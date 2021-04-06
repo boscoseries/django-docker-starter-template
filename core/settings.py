@@ -30,7 +30,7 @@ SECRET_KEY = '7et@t7qd$5ijb(j75m)5tljv9ygwdwb$^*%uc4#da2z!0vu4s4'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "127.0.0.1", "oyo-ussd.herokuapp.com", "localhost", "aeb44fb8ff40.ngrok.io"
+    "127.0.0.1", "oyo-ussd.herokuapp.com", "localhost"
 ]
 
 # Application definition
