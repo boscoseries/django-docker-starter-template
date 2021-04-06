@@ -56,4 +56,9 @@ class Menu(object):
             4. Contact Hospital
             5. Request Health Taxi
         """.format(self.user['firstName'])
+        print('''
+              
+              returning home menu
+
+              ''')
         return self.ussd_proceed(text)
