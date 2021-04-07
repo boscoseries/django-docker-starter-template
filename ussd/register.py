@@ -50,22 +50,21 @@ class Registration(Menu, Request):
 
     def get_fullname(self):
         text = """\
-      Input Fullname
-      (Surname Firstname Middlename)
-  """
+        Input Fullname
+        (Surname Firstname Middlename)
+        """
         self.session_data['level'] = 2
         return self.ussd_proceed(text)
 
     def get_gender(self):
         text = """\
-      Select Gender
-      1. Male
-      2. Female
-  """
+        Select Gender
+        1. Male
+        2. Female
+        """
         name = self.user_option.split('+')
         if len(name) < 2:
             raise Exception('Provide your fullname')
-        # print('name and user option', name, self.user_option)
         self.user.update({
             "lastName": name[0],
             "firstName": name[1],
@@ -76,9 +75,9 @@ class Registration(Menu, Request):
 
     def get_dob(self):
         text = """\
-    Input Date of Birth
-    (DD-MM-YYYY)
-  """
+        Input Date of Birth
+        (DD-MM-YYYY)
+        """
         gender = {1: 'Male', 2: ' Female'}
         self.user['gender'] = gender[int(self.user_option)]
         self.session_data['level'] = 4
@@ -178,14 +177,13 @@ class Registration(Menu, Request):
         laboratory_dict = self.session_data["pharmacy_dict"]
         self.user['pref_laboratory'] = laboratory_dict[self.user_option]
         self.user['phone'] = self.phone_number
-        # print(self.user)
-        citizen = self.make_request("post", "/citizen", self.user)
-        if citizen['_id']:
-            return self.ussd_end("""
-                                    Registration Successful
-                                    Thank You!
-                                """)
-        return self.ussd_end("An error occurred, Try again")
+        try:
+            citizen = self.make_request("post", "/citizen", self.user)
+            if citizen['_id']:
+                return self.ussd_end("Registration Successful\nThank You!")
+        except Exception as e:
+            capture_exception(e)
+            return self.ussd_end("An error occurred, Try again")
 
     def execute(self):
         try:

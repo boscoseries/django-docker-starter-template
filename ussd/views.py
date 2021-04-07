@@ -25,56 +25,39 @@ class USSDViewsets(viewsets.ModelViewSet):
         request_dict = dict((x.strip(), y.strip())
                             for x, y in (element.split('=')
                                          for element in url_params.split('&')))
-
         session_id = request_dict.get("sessionId", None)
         service_code = request_dict.get("serviceCode", None)
         phone_number = request_dict.get("phoneNumber", None)
         network_code = request_dict.get('networkCode', None)
         text = request_dict.get('text', None)
-
         phone_number = phone_number.replace('+234', '0')
-
         session = cache.get(session_id)
         session_data = {}
 
-        citizen = req.make_request('post',
-                                   '/citizen',
-                                   data={
-                                       "action": "check-unique",
-                                       "phone": phone_number
-                                   })
-        print('citizen --------------------------------------------------------------------->', citizen)
-
-        if session is None:
-            session_data['level'] = 0
-
-            session_data[
-                'engagement'] = True if not citizen['unique'] else None
-            session_data['menu'] = 'home' if not citizen['unique'] else None
-            cache.set(session_id, session_data)
-            user = cache.set("user", {"phone": phone_number})
-        else:
-            session_data = session
-
-        user_option = text.split('*')[-1]
-        level = int(session_data.get('level'))
-
-        data = {
-            "session_id": session_id,
-            "session_data": session_data,
-            "user_option": user_option,
-            "user": citizen['data'][0] if not citizen['unique'] else cache.get("user"),
-            "phone_number": phone_number,
-            "level": level,
-            "base_url": None
-        }
-
-        print('''
-              returning user ----->
-              ''',
-              data['session_data']['engagement'])
-
         try:
+            citizen = req.make_request('post', '/citizen', data={"action": "check-unique", "phone": phone_number })
+            if session is None:
+                session_data['level'] = 0
+                session_data['engagement'] = True if citizen.get('unique') == False else None
+                session_data['menu'] = 'home' if citizen.get('unique') == False else None
+                cache.set(session_id, session_data)
+                user = cache.set("user", {"phone": phone_number})
+            else:
+                session_data = session
+
+            user_option = text.split('*')[-1]
+            level = int(session_data.get('level'))
+
+            data = {
+                "session_id": session_id,
+                "session_data": session_data,
+                "user_option": user_option,
+                "user": citizen['data'][0] if citizen.get('unique') == False else cache.get("user"),
+                "phone_number": phone_number,
+                "level": level,
+                "base_url": None
+            }
+
             if not session_data['engagement']:
                 register = Registration(**data)
                 if level == 0:
