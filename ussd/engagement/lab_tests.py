@@ -12,12 +12,12 @@ class LabTests(Menu, Request):
     def home(self):
         text = """\
         What do yo want to do?
-      1. List of Test
-      2. Tests with price
-      3. Tests without price
-      4. Take a Test
-      99. Main Menu
-      """
+        1. List of Test
+        2. Tests with price
+        3. Tests without price
+        4. Take a Test
+        99. Main Menu
+        """
         self.session_data.update({
             "menu": "lab_tests",
             "base": False,
@@ -29,13 +29,11 @@ class LabTests(Menu, Request):
         text = """\
         Received.
         Laboratory will get back to you.
-    """
+        """
         return self.ussd_end(text)
 
     def test_list(self):
-        text = """\
-            Your test recommendations
-        """
+        text = "Your test recommendations"
         tests = self.make_request('get',
                                   f"/labtest?citizen={self.user['_id']}")
         for x, y in enumerate(tests['data']):
@@ -47,9 +45,7 @@ class LabTests(Menu, Request):
         return self.ussd_proceed(text)
 
     def accepted_tests(self):
-        text = """\
-            Your test recommendations
-        """
+        text = "Your test recommendations"
         tests = self.make_request(
             'get', f"/labtest?citizen={self.user['_id']}&status=fulfilled")
         for x, y in enumerate(tests['data']):
@@ -61,9 +57,7 @@ class LabTests(Menu, Request):
         return self.ussd_proceed(text)
 
     def pending_tests(self):
-        text = """\
-            Your test recommendations
-        """
+        text = "Your test recommendations"
         tests = self.make_request(
             'get', f"/labtest?citizen={self.user['_id']}&status=pending")
         for x, y in enumerate(tests['data']):
@@ -76,8 +70,8 @@ class LabTests(Menu, Request):
 
     def test_type(self):
         text = """\
-             Enter test type
-             (e.g. malaria test)
+        Enter test type
+        (e.g. malaria test)
         """
         self.session_data.update({"level": 2})
         return self.ussd_proceed(text)

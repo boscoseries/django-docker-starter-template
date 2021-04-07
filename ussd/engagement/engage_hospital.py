@@ -11,24 +11,22 @@ class Hospital(Menu, Request):
 
     def doctor_close_session(self):
         text = """\
-            Received.
-            Doctor will get back to you.
+        Received.
+        Doctor will get back to you.
         """
         return self.ussd_end(text)
 
     def end_session(self):
-        text = """\
-            Goodbye
-        """
+        text = "Goodbye"
         return self.ussd_end(text)
 
     def home(self):
         text = """\
-            Select a service
-            1. Contact Hospital Doctor
-            2. Contact Hospital Pharmacy
-            3. Contact Hospital Lab
-            99. Main Menu
+        Select a service
+        1. Contact Hospital Doctor
+        2. Contact Hospital Pharmacy
+        3. Contact Hospital Lab
+        99. Main Menu
         """
         self.session_data.update({
             "menu": "engage_hospital",
@@ -38,15 +36,11 @@ class Hospital(Menu, Request):
         return self.ussd_proceed(text)
 
     def engage_doctor(self):
-        # hospital_option = self.session_data['hospital_dict'][self.user_option]
         text_unavailable = """
         Doctor is not available at your preferred hospital,
         would you like to engage another hospital?
         1. Yes
         2. No
-        """
-        text = """\
-            Available at your Pharmacy:
         """
         doctor = self.make_request('get', f"/doctor?availability=true")
         print(doctor)
@@ -57,15 +51,15 @@ class Hospital(Menu, Request):
 
     def engage_pharmacy(self):
         text = """\
-            Received.
-            Pharmacy will get back to you.
+        Received.
+        Pharmacy will get back to you.
         """
         return self.ussd_end(text)
 
     def engage_laboratory(self):
         text = """\
-            Received.
-            Laboratory will get back to you.
+        Received.
+        Laboratory will get back to you.
         """
         return self.ussd_end(text)
 

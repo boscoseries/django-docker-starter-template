@@ -14,11 +14,11 @@ class Prescribe(Menu, Request):
     def home(self):
         text = """\
         What do yo want to do?
-      1. List of Drugs
-      2. Drugs with price
-      3. Drugs without price
-      99. Main Menu
-      """
+        1. List of Drugs
+        2. Drugs with price
+        3. Drugs without price
+        99. Main Menu
+        """
         self.session_data.update({
             "menu": "prescription",
             "base": False,
@@ -28,7 +28,7 @@ class Prescribe(Menu, Request):
 
     def all_prescription(self):
         text = """\
-            All your Prescription:
+        All your Prescription:
         """
         prescription = self.make_request(
             'get', f"/medication?citizen={self.user['_id']}")
@@ -42,7 +42,7 @@ class Prescribe(Menu, Request):
 
     def fulfilled_prescription(self):
         text = """\
-            Available at your Pharmacy
+        Available at your Pharmacy
         """
         prescription = self.make_request(
             'get', f"/medication?citizen={self.user['_id']}&fulfilled=true")
@@ -56,22 +56,22 @@ class Prescribe(Menu, Request):
 
     def unavailable_prescription(self):
         text = """\
-             Un-available at your Pharmacy
+        Un-available at your Pharmacy
         """
         prescription = self.make_request(
             'get', f"/medication?citizen={self.user['_id']}&fulfilled=false")
         for x, y in enumerate(prescription['data']):
             text += f"{x+1}. {y['medication']}\n"
         if prescription['total'] == 0:
-            text += "You have no prescription.\n"
+            text = "You have no prescription.\n"
         text += "00.Back"
         self.session_data['level'] = 0
         return self.ussd_proceed(text)
 
     def close_session(self):
         text = """\
-            Received.
-            Pharmacy will get back to you.
+        Received.
+        Pharmacy will get back to you.
         """
         return self.ussd_end(text)
 

@@ -11,8 +11,8 @@ class Consult(Menu, Request):
 
     def close_session(self):
         text = """\
-            Received.
-            Doctor will get back to you.
+        Received.
+        Doctor will get back to you.
         """
         return self.ussd_end(text)
 
