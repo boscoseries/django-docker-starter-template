@@ -117,7 +117,9 @@ class Registration(Menu, Request):
         self.user['lga'] = list(lga_dict[self.user_option].keys())[0]
         lga_dict = self.session_data["lga_dict"]
         threeChar = list(lga_dict[self.user_option].values())[0]
+        print(f"/lga?threeChar={threeChar}")
         lga = self.make_request("get", f"/lga?threeChar={threeChar}")
+        print(lga)
         if lga['total'] < 1:
             return self.ussd_end("LGA not found")
         for x, y in enumerate(lga['data'][0]['districts']):
