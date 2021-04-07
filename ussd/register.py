@@ -98,8 +98,8 @@ class Registration(Menu, Request):
         text = 'Select your Local Govt. Area\n'
         data = {}
         lga_dict = self.session_data["lga_dict"]
-        print('lga dict------>', lga_dict)
-        print('lga option------>', lga_dict[self.user_option])
+        # print('lga dict------>', lga_dict)
+        # print('lga option------>', lga_dict[self.user_option])
         for x, y in enumerate(lga_dict[self.user_option]):
             text += f"{x+1}. {list(y.keys())[0]}\n"
             data.update({str(x + 1): y})
@@ -115,9 +115,9 @@ class Registration(Menu, Request):
         self.user['lga'] = list(lga_dict[self.user_option].keys())[0]
         lga_dict = self.session_data["lga_dict"]
         threeChar = list(lga_dict[self.user_option].values())[0]
-        print(f"/lga?threeChar={threeChar}")
+        # print(f"/lga?threeChar={threeChar}")
         lga = self.make_request("get", f"/lga?threeChar={threeChar}")
-        print(lga)
+        # print(lga)
         if lga['total'] < 1:
             return self.ussd_end("LGA not found")
         for x, y in enumerate(lga['data'][0]['districts']):

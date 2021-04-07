@@ -58,6 +58,9 @@ class USSDViewsets(viewsets.ModelViewSet):
                 "base_url": None
             }
 
+            print('session data---------->', session_data)
+            print('init data object---------->', data)
+
             if not session_data['engagement']:
                 register = Registration(**data)
                 if level == 0:
