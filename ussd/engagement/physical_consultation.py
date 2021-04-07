@@ -10,10 +10,8 @@ class Consult(Menu, Request):
         Request.__init__(self, base_url)
 
     def close_session(self):
-        text = """\
-        Received.
-        Doctor will get back to you.
-        """
+        text = "Received.\nDoctor will get back to you."
+        
         return self.ussd_end(text)
 
     def execute(self):

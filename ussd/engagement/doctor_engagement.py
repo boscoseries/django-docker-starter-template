@@ -10,10 +10,8 @@ class Doctor(Menu, Request):
         Request.__init__(self, base_url)
 
     def close_session(self):
-        text = """\
-        Received.
-        Doctor will get back to you.
-        """
+        text = "Received.\nDoctor will get back to you."
+        
         engage_doctor = self.make_request('post',
                                           '/consultation-requests',
                                           data={"citizen": self.user['_id']})

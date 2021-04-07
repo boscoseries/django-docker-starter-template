@@ -94,7 +94,6 @@ class Registration(Menu, Request):
         data = {}
         lga_dict = self.session_data["lga_dict"]
         for x, y in enumerate(lga_dict[self.user_option]):
-            print(f"{x+1}. {list(y.keys())[0]}\n")
             text += f"{x+1}. {list(y.keys())[0]}\n"
             data.update({str(x + 1): y})
         self.session_data['level'] = 6

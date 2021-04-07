@@ -10,14 +10,8 @@ class LabTests(Menu, Request):
         Request.__init__(self, base_url)
 
     def home(self):
-        text = """\
-        What do yo want to do?
-        1. List of Test
-        2. Tests with price
-        3. Tests without price
-        4. Take a Test
-        99. Main Menu
-        """
+        text = "What do yo want to do?\n1. List of Test\n2. Tests with price\n3. Tests without price\n4. Take a Test\n99. Main Menu"
+
         self.session_data.update({
             "menu": "lab_tests",
             "base": False,
@@ -26,10 +20,8 @@ class LabTests(Menu, Request):
         return self.ussd_proceed(text)
 
     def close_session(self):
-        text = """\
-        Received.
-        Laboratory will get back to you.
-        """
+        text = "Received.\nLaboratory will get back to you."
+
         return self.ussd_end(text)
 
     def test_list(self):
@@ -69,10 +61,8 @@ class LabTests(Menu, Request):
         return self.ussd_proceed(text)
 
     def test_type(self):
-        text = """\
-        Enter test type
-        (e.g. malaria test)
-        """
+        text = "Enter test type\n(e.g. malaria test)"
+        
         self.session_data.update({"level": 2})
         return self.ussd_proceed(text)
 

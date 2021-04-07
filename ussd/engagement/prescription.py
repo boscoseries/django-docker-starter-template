@@ -12,13 +12,8 @@ class Prescribe(Menu, Request):
             self.level = int(self.user_option)
 
     def home(self):
-        text = """\
-        What do yo want to do?
-        1. List of Drugs
-        2. Drugs with price
-        3. Drugs without price
-        99. Main Menu
-        """
+        text = "What do yo want to do?\n 1. List of Drugs\n2. Drugs with price\n3. Drugs without price\n99. Main Menu"
+
         self.session_data.update({
             "menu": "prescription",
             "base": False,
@@ -27,9 +22,8 @@ class Prescribe(Menu, Request):
         return self.ussd_proceed(text)
 
     def all_prescription(self):
-        text = """\
-        All your Prescription:
-        """
+        text = "All your Prescription:\n"
+
         prescription = self.make_request(
             'get', f"/medication?citizen={self.user['_id']}")
         for x, y in enumerate(prescription['data']):
@@ -41,9 +35,8 @@ class Prescribe(Menu, Request):
         return self.ussd_proceed(text)
 
     def fulfilled_prescription(self):
-        text = """\
-        Available at your Pharmacy
-        """
+        text = "Available at your Pharmacy"
+
         prescription = self.make_request(
             'get', f"/medication?citizen={self.user['_id']}&fulfilled=true")
         for x, y in enumerate(prescription['data']):
@@ -55,9 +48,8 @@ class Prescribe(Menu, Request):
         return self.ussd_proceed(text)
 
     def unavailable_prescription(self):
-        text = """\
-        Un-available at your Pharmacy
-        """
+        text = "Un-available at your Pharmacy"
+
         prescription = self.make_request(
             'get', f"/medication?citizen={self.user['_id']}&fulfilled=false")
         for x, y in enumerate(prescription['data']):
@@ -69,10 +61,8 @@ class Prescribe(Menu, Request):
         return self.ussd_proceed(text)
 
     def close_session(self):
-        text = """\
-        Received.
-        Pharmacy will get back to you.
-        """
+        text = "Received.\nPharmacy will get back to you."
+        
         return self.ussd_end(text)
 
     def execute(self):
