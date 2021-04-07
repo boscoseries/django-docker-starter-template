@@ -196,4 +196,4 @@ class Registration(Menu, Request):
                 return menu.get(self.level)()
         except Exception as e:
             capture_exception(e)
-            return self.ussd_end(str(e))
+            return self.ussd_end('Something went wrong!')
