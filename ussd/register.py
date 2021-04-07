@@ -72,7 +72,7 @@ class Registration(Menu, Request):
 
     def get_dob(self):
         text = "Input Date of Birth\n(DD-MM-YYYY)"
-        
+
         gender = {1: 'Male', 2: ' Female'}
         self.user['gender'] = gender[int(self.user_option)]
         self.session_data['level'] = 4
@@ -105,7 +105,7 @@ class Registration(Menu, Request):
             data.update({str(x + 1): y})
         self.session_data['level'] = 6
         self.session_data["lga_dict"] = data
-        print('got to the end of lga options', data)
+        print('got to the end of lga options ---------->', data)
         return self.ussd_proceed(text)
 
     def get_town(self):
