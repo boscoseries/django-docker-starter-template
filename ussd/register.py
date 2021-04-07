@@ -7,9 +7,8 @@ from sentry_sdk import capture_exception
 
 lga = {
     "A": [{"Afijio": "afj"}, {"Atiba": "atb"}, {"Atisbo": "ats"}, {"Akinyele": "aki"}],
-    # "Iba": [{"Ibadan North": "ibn"}, {"Ibadan North East": "ine"}, {"Ibadan North West": "inw"},
-    #     {"Ibadan South East": "ise"}, {"Ibadan South West": "isw"}, {"Ibarapa North": "ipn"},
-    #     {"Ibarapa East": "ipe"}, {"Ibarapa Central": "ipc"}],
+    "Iba": [{"Ibadan North": "ibn"}, {"Ibadan North East": "ine"}, {"Ibadan North West": "inw"},
+        {"Ibadan South East": "ise"}, {"Ibadan South West": "isw"}, {"Ibarapa North": "ipn"}],
     "K, L, E": [{"Kajola": "kja"}, {"Lagelu": "lge"}, {"Egbeda": "egb"}],
     "It, Is, Iw, Id, Ir": [{"Itesiwaju": "its"}, {"Iwajowa": "iwj"}, {"Iseyin": "isy"}, {"Ido": "ido"}, {"Irepo": "irp"}],
     "Og": [{"Ogbomosho South": "ogs"}, {"Ogbomosho North": "ogn"}, {"Ogo Oluwa": "ogl"}],
@@ -95,6 +94,7 @@ class Registration(Menu, Request):
         data = {}
         lga_dict = self.session_data["lga_dict"]
         for x, y in enumerate(lga_dict[self.user_option]):
+            print(f"{x+1}. {list(y.keys())[0]}\n")
             text += f"{x+1}. {list(y.keys())[0]}\n"
             data.update({str(x + 1): y})
         self.session_data['level'] = 6
