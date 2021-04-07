@@ -69,11 +69,6 @@ class USSDViewsets(viewsets.ModelViewSet):
             "base_url": None
         }
 
-        # print('''
-        #       user data ----->
-        #       ''',
-        #       data['user'])
-
         print('''
               returning user ----->
               ''',
@@ -91,11 +86,6 @@ class USSDViewsets(viewsets.ModelViewSet):
                 raise Exception('Something went wrong!')
 
             if session_data['engagement']:
-                print('''
-
-                      entered engagement
-
-                      ''')
                 doctor = Doctor(**data)
                 if session_data.get('menu') == 'home' or (user_option == '99'):
                     session_data.update({
