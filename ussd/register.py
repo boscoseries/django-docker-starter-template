@@ -7,9 +7,9 @@ from sentry_sdk import capture_exception
 
 lga = {
     "A": [{"Afijio": "afj"}, {"Atiba": "atb"}, {"Atisbo": "ats"}, {"Akinyele": "aki"}],
-    "Iba": [{"Ibadan North": "ibn"}, {"Ibadan North East": "ine"}, {"Ibadan North West": "inw"},
-        {"Ibadan South East": "ise"}, {"Ibadan South West": "isw"}, {"Ibarapa North": "ipn"},
-        {"Ibarapa East": "ipe"}, {"Ibarapa Central": "ipc"}],
+    # "Iba": [{"Ibadan North": "ibn"}, {"Ibadan North East": "ine"}, {"Ibadan North West": "inw"},
+    #     {"Ibadan South East": "ise"}, {"Ibadan South West": "isw"}, {"Ibarapa North": "ipn"},
+    #     {"Ibarapa East": "ipe"}, {"Ibarapa Central": "ipc"}],
     "K, L, E": [{"Kajola": "kja"}, {"Lagelu": "lge"}, {"Egbeda": "egb"}],
     "It, Is, Iw, Id, Ir": [{"Itesiwaju": "its"}, {"Iwajowa": "iwj"}, {"Iseyin": "isy"}, {"Ido": "ido"}, {"Irepo": "irp"}],
     "Og": [{"Ogbomosho South": "ogs"}, {"Ogbomosho North": "ogn"}, {"Ogo Oluwa": "ogl"}],
@@ -42,8 +42,6 @@ class Registration(Menu, Request):
         Menu.__init__(self, session_id, session_data, user_option,
                       user, phone_number, level)
         Request.__init__(self, base_url)
-
-        print('level---------->', self.level)
 
     def end_session(self):
         return self.ussd_end("Goodbye")
@@ -96,14 +94,11 @@ class Registration(Menu, Request):
         text = 'Select your Local Govt. Area\n'
         data = {}
         lga_dict = self.session_data["lga_dict"]
-        # print('lga dict------>', lga_dict)
-        # print('lga option------>', lga_dict[self.user_option])
         for x, y in enumerate(lga_dict[self.user_option]):
             text += f"{x+1}. {list(y.keys())[0]}\n"
             data.update({str(x + 1): y})
         self.session_data['level'] = 6
         self.session_data["lga_dict"] = data
-        print('got to the end of lga options ---------->', data)
         return self.ussd_proceed(text)
 
     def get_town(self):
@@ -113,9 +108,7 @@ class Registration(Menu, Request):
         self.user['lga'] = list(lga_dict[self.user_option].keys())[0]
         lga_dict = self.session_data["lga_dict"]
         threeChar = list(lga_dict[self.user_option].values())[0]
-        # print(f"/lga?threeChar={threeChar}")
         lga = self.make_request("get", f"/lga?threeChar={threeChar}")
-        # print(lga)
         if lga['total'] < 1:
             return self.ussd_end("LGA not found")
         for x, y in enumerate(lga['data'][0]['districts']):
