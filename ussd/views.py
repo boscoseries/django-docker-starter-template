@@ -57,8 +57,6 @@ class USSDViewsets(viewsets.ModelViewSet):
                 "level": level,
                 "base_url": None
             }
-
-            print('session data---------->', session_data)
             print('init data object---------->', data)
 
             if not session_data['engagement']:
