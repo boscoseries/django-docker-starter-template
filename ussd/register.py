@@ -45,23 +45,20 @@ class Registration(Menu, Request):
                       user, phone_number, level)
         Request.__init__(self, base_url)
 
+        print('level---------->', self.level)
+
     def end_session(self):
         return self.ussd_end("Goodbye")
 
     def get_fullname(self):
-        text = """\
-        Input Fullname
-        (Surname Firstname Middlename)
-        """
+        text = "Input Fullname\n(Surname Firstname Middlename)"
+
         self.session_data['level'] = 2
         return self.ussd_proceed(text)
 
     def get_gender(self):
-        text = """\
-        Select Gender
-        1. Male
-        2. Female
-        """
+        text = "Select Gender\n1. Male\n2. Female"
+
         name = self.user_option.split('+')
         if len(name) < 2:
             raise Exception('Provide your fullname')
@@ -74,10 +71,8 @@ class Registration(Menu, Request):
         return self.ussd_proceed(text)
 
     def get_dob(self):
-        text = """\
-        Input Date of Birth
-        (DD-MM-YYYY)
-        """
+        text = "Input Date of Birth\n(DD-MM-YYYY)"
+        
         gender = {1: 'Male', 2: ' Female'}
         self.user['gender'] = gender[int(self.user_option)]
         self.session_data['level'] = 4
@@ -103,11 +98,14 @@ class Registration(Menu, Request):
         text = 'Select your Local Govt. Area\n'
         data = {}
         lga_dict = self.session_data["lga_dict"]
+        print('lga dict------>', lga_dict)
+        print('lga option------>', lga_dict[self.user_option])
         for x, y in enumerate(lga_dict[self.user_option]):
             text += f"{x+1}. {list(y.keys())[0]}\n"
             data.update({str(x + 1): y})
         self.session_data['level'] = 6
         self.session_data["lga_dict"] = data
+        print('got to the end of lga options', data)
         return self.ussd_proceed(text)
 
     def get_town(self):
