@@ -7,11 +7,9 @@ from sentry_sdk import capture_exception
 
 lga = {
     "A": [{"Afijio": "afj"}, {"Atiba": "atb"}, {"Atisbo": "ats"}, {"Akinyele": "aki"}],
-    "Iba": [
-        {"Ibadan North": "ibn"}, {"Ibadan North East": "ine"}, {"Ibadan North West": "inw"},
+    "Iba": [{"Ibadan North": "ibn"}, {"Ibadan North East": "ine"}, {"Ibadan North West": "inw"},
         {"Ibadan South East": "ise"}, {"Ibadan South West": "isw"}, {"Ibarapa North": "ipn"},
-        {"Ibarapa East": "ipe"}, {"Ibarapa Central": "ipc"}
-    ],
+        {"Ibarapa East": "ipe"}, {"Ibarapa Central": "ipc"}],
     "K, L, E": [{"Kajola": "kja"}, {"Lagelu": "lge"}, {"Egbeda": "egb"}],
     "It, Is, Iw, Id, Ir": [{"Itesiwaju": "its"}, {"Iwajowa": "iwj"}, {"Iseyin": "isy"}, {"Ido": "ido"}, {"Irepo": "irp"}],
     "Og": [{"Ogbomosho South": "ogs"}, {"Ogbomosho North": "ogn"}, {"Ogo Oluwa": "ogl"}],
