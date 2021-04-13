@@ -22,12 +22,13 @@ class Menu(object):
 
     def ussd_proceed(self, text):
         cache.set(self.session_id, self.session_data)
-        cache.set('user', self.user)
+        cache.set(f"user{self.phone_number}", self.user)
         text = "CON {}".format(text)
         return HttpResponse(text, content_type="text/plain")
 
     def ussd_end(self, text):
         cache.delete(self.session_id)
+        cache.delete(f"user{self.phone_number}")
         text = "END {}".format(text)
         return HttpResponse(text, content_type="text/plain")
 

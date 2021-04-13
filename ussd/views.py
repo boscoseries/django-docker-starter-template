@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from .register import Registration
 from ussd.engagement import (Doctor, Consult, Prescribe, Hospital, LabTests)
 from ussd.requests import Request
+from sentry_sdk import capture_exception
 
 req = Request(base_url=None)
 
@@ -41,7 +42,7 @@ class USSDViewsets(viewsets.ModelViewSet):
                 session_data['engagement'] = True if citizen.get('unique') == False else None
                 session_data['menu'] = 'home' if citizen.get('unique') == False else None
                 cache.set(session_id, session_data)
-                user = cache.set("user", {"phone": phone_number})
+                user = cache.set(f"user{phone_number}", {"phone": phone_number})
             else:
                 session_data = session
 
@@ -52,7 +53,7 @@ class USSDViewsets(viewsets.ModelViewSet):
                 "session_id": session_id,
                 "session_data": session_data,
                 "user_option": user_option,
-                "user": citizen['data'][0] if citizen.get('unique') == False else cache.get("user"),
+                "user": citizen['data'][0] if citizen.get('unique') == False else cache.get(f"user{phone_number}"),
                 "phone_number": phone_number,
                 "level": level,
                 "base_url": None
@@ -109,5 +110,6 @@ class USSDViewsets(viewsets.ModelViewSet):
                 raise Exception('Something went wrong!')
 
         except Exception as e:
-            return HttpResponse(str(e), content_type="text/plain")
             cache.delete(session_id)
+            capture_exception(e)
+            return HttpResponse(str(e), content_type="text/plain")
