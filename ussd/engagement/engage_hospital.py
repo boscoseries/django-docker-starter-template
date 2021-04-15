@@ -1,5 +1,7 @@
 from ussd.base_menu import Menu
 from ussd.requests import Request
+from sentry_sdk import capture_exception
+from django.core.cache import cache
 
 
 class Hospital(Menu, Request):
@@ -61,4 +63,6 @@ class Hospital(Menu, Request):
             }
             return menu.get(self.level)()
         except Exception as e:
-            return self.ussd_end(str(e))
+            cache.delete(self.session_id)
+            capture_exception(e)
+            return self.ussd_end("Something went wrong!")

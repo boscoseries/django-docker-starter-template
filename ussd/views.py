@@ -42,8 +42,8 @@ class USSDViewsets(viewsets.ModelViewSet):
 
                 if session_data.get("level") >= 1:
                     return register.execute()
-                raise Exception('Something went wrong!')
 
+                raise Exception('Something went wrong!')
             else:
                 session_data = cache.get_or_set(session_id, {
                     "user": citizen['data'][0],
@@ -108,8 +108,7 @@ class USSDViewsets(viewsets.ModelViewSet):
                     return doctor.start()
 
                 raise Exception('Something went wrong!')
-
         except Exception as e:
             cache.delete(session_id)
             capture_exception(e)
-            return HttpResponse(str(e), content_type="text/plain")
+            return HttpResponse("Something went wrong!", content_type="text/plain")

@@ -208,6 +208,6 @@ class Registration(Menu, Request):
                 }
                 return menu.get(self.level)()
         except Exception as e:
-            # print(e)
+            cache.delete(self.session_id)
             capture_exception(e)
             return self.ussd_end('Something went wrong!')
