@@ -37,10 +37,10 @@ class Registration(Menu, Request):
     New User Registration
     """
 
-    def __init__(self, session_id, session_data, user_option, user,
-                 phone_number, level, base_url):
+    def __init__(self, session_id, session_data, user_option,
+                  level, base_url):
         Menu.__init__(self, session_id, session_data, user_option,
-                      user, phone_number, level)
+                       level)
         Request.__init__(self, base_url)
 
     def end_session(self):
@@ -58,7 +58,7 @@ class Registration(Menu, Request):
         name = self.user_option.split('+')
         if len(name) < 2:
             raise Exception('Provide your fullname')
-        self.user.update({
+        self.session_data['user'].update({
             "lastName": name[0],
             "firstName": name[1],
             "middleName": name[2] if len(name) > 2 else None
@@ -70,7 +70,9 @@ class Registration(Menu, Request):
         text = "Input Date of Birth\n(DD-MM-YYYY)"
 
         gender = {1: 'Male', 2: ' Female'}
-        self.user['gender'] = gender[int(self.user_option)]
+        self.session_data['user'].update({
+            "gender": gender[int(self.user_option)],
+        })
         self.session_data['level'] = 4
         return self.ussd_proceed(text)
 
@@ -78,7 +80,9 @@ class Registration(Menu, Request):
         dob = re.split('[\*\./-]', self.user_option)
         if len(dob) != 3:
             raise Exception('Invalid date input format')
-        self.user['dob'] = datetime.date(int(dob[2]), int(dob[1]), int(dob[0]))
+        self.session_data['user'].update({
+                "dob": datetime.date(int(dob[2]), int(dob[1]), int(dob[0])),
+                })
         text = 'Your LGA starts with?\n'
         n = 0
         data = {}
@@ -105,7 +109,9 @@ class Registration(Menu, Request):
         text = "Slect a district closest to you\n"
         data = {}
         lga_dict = self.session_data["lga_dict"]
-        self.user['lga'] = list(lga_dict[self.user_option].keys())[0]
+        self.session_data['user'].update({
+            "lga": list(lga_dict[self.user_option].keys())[0],
+        })
         lga_dict = self.session_data["lga_dict"]
         threeChar = list(lga_dict[self.user_option].values())[0]
         lga = self.make_request("get", f"/lga?threeChar={threeChar}")
@@ -122,8 +128,9 @@ class Registration(Menu, Request):
         text = "Select your preferred hospital\n"
         data = {}
         town_dict = self.session_data["town_dict"]
-        self.user['town'] = town_dict[self.user_option]
-
+        self.session_data['user'].update({
+            "town": town_dict[self.user_option],
+        })
         hospitals = self.make_request("get", "/hospital")
         if hospitals['total'] < 1:
             return self.ussd_end("Hospital not found")
@@ -138,7 +145,9 @@ class Registration(Menu, Request):
         text = "Select your preferred pharmacy\n"
         data = {}
         hospital_dict = self.session_data["hospital_dict"]
-        self.user['pref_hospital'] = hospital_dict[self.user_option]
+        self.session_data['user'].update({
+            "pref_hospital": hospital_dict[self.user_option],
+        })
         pharmacies = self.make_request("get", "/pharmacy")
         if pharmacies['total'] < 1:
             return self.ussd_end("Pharmacy not found")
@@ -153,7 +162,9 @@ class Registration(Menu, Request):
         text = "Select your preferred laboratory\n"
         data = {}
         pharmacy_dict = self.session_data["pharmacy_dict"]
-        self.user['pref_pharmacy'] = pharmacy_dict[self.user_option]
+        self.session_data['user'].update({
+            "pref_pharmacy": pharmacy_dict[self.user_option],
+        })
         laboratories = self.make_request("get", "/laboratory")
         if laboratories['total'] < 1:
             return self.ussd_end("Laboratory not found")
@@ -165,11 +176,12 @@ class Registration(Menu, Request):
         return self.ussd_proceed(text)
 
     def create_citizen(self):
-        laboratory_dict = self.session_data["pharmacy_dict"]
-        self.user['pref_laboratory'] = laboratory_dict[self.user_option]
-        self.user['phone'] = self.phone_number
+        laboratory_dict = self.session_data["laboratory_dict"]
+        self.session_data['user'].update({
+            "pref_laboratory": laboratory_dict[self.user_option],
+        })
         try:
-            citizen = self.make_request("post", "/citizen", self.user)
+            citizen = self.make_request("post", "/citizen", self.session_data['user'])
             if citizen['_id']:
                 return self.ussd_end("Registration Successful\nThank You!")
         except Exception as e:
@@ -196,5 +208,6 @@ class Registration(Menu, Request):
                 }
                 return menu.get(self.level)()
         except Exception as e:
+            # print(e)
             capture_exception(e)
             return self.ussd_end('Something went wrong!')

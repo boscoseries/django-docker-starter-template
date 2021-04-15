@@ -3,10 +3,8 @@ from ussd.requests import Request
 
 
 class LabTests(Menu, Request):
-    def __init__(self, session_id, session_data, user_option, user,
-                 phone_number, level, base_url):
-        Menu.__init__(self, session_id, session_data, user_option, user,
-                      phone_number, level)
+    def __init__(self, session_id, session_data, user_option, level, base_url):
+        Menu.__init__(self, session_id, session_data, user_option, level)
         Request.__init__(self, base_url)
 
     def home(self):
@@ -26,8 +24,9 @@ class LabTests(Menu, Request):
 
     def test_list(self):
         text = "Your test recommendations"
-        tests = self.make_request('get',
-                                  f"/labtest?citizen={self.user['_id']}")
+        tests = self.make_request(
+            'get',
+            f"/labtest?citizen={self.session_data.get('user').get('_id')}")
         for x, y in enumerate(tests['data']):
             text += f"{x+1}. {y['test']}\n"
         if tests['total'] == 0:
@@ -39,7 +38,9 @@ class LabTests(Menu, Request):
     def accepted_tests(self):
         text = "Your test recommendations"
         tests = self.make_request(
-            'get', f"/labtest?citizen={self.user['_id']}&status=fulfilled")
+            'get',
+            f"/labtest?citizen={self.session_data.get('user').get('_id')}&status=fulfilled"
+        )
         for x, y in enumerate(tests['data']):
             text += f"{x+1}. {y['test']}\n"
         if tests['total'] == 0:
@@ -51,7 +52,9 @@ class LabTests(Menu, Request):
     def pending_tests(self):
         text = "Your test recommendations"
         tests = self.make_request(
-            'get', f"/labtest?citizen={self.user['_id']}&status=pending")
+            'get',
+            f"/labtest?citizen={self.session_data.get('user').get('_id')}&status=pending"
+        )
         for x, y in enumerate(tests['data']):
             text += f"{x+1}. {y['test']}\n"
         if tests['total'] == 0:
@@ -62,24 +65,27 @@ class LabTests(Menu, Request):
 
     def test_type(self):
         text = "Enter test type\n(e.g. malaria test)"
-        
+
         self.session_data.update({"level": 2})
         return self.ussd_proceed(text)
 
     def process_test_type(self):
-        test_request = self.make_request('POST', "/labrequest", json={
-            'labrequest': {
-                "test": self.user_option,
-                "fulfilled": False,
-                "lab_fulfill": None,
-                "doctor": None,
-                "citizen": self.user['_id'],
-                "encounter": None,
-                "lab_dest": self.user['pref_laboratory'],
-                "status": "pending",
-                "lab_action": None
-            }
-        })
+        test_request = self.make_request(
+            'POST',
+            "/labrequest",
+            json={
+                'labrequest': {
+                    "test": self.user_option,
+                    "fulfilled": False,
+                    "lab_fulfill": None,
+                    "doctor": None,
+                    "citizen": self.session_data.get('user').get('_id'),
+                    "encounter": None,
+                    "lab_dest": self.session_data.get('user').get('pref_laboratory'),
+                    "status": "pending",
+                    "lab_action": None
+                }
+            })
         print(test_request)
         return self.close_session()
 
@@ -96,7 +102,6 @@ class LabTests(Menu, Request):
                 3: self.pending_tests,
                 4: self.test_type,
                 21: self.process_test_type,
-                # 6: self.close_session,
             }
             return menu.get(self.level)()
         except Exception as e:

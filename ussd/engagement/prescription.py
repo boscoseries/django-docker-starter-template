@@ -3,10 +3,8 @@ from ussd.requests import Request
 
 
 class Prescribe(Menu, Request):
-    def __init__(self, session_id, session_data, user_option, user,
-                 phone_number, level, base_url):
-        Menu.__init__(self, session_id, session_data, user_option, user,
-                      phone_number, level)
+    def __init__(self, session_id, session_data, user_option, level, base_url):
+        Menu.__init__(self, session_id, session_data, user_option, level)
         Request.__init__(self, base_url)
         if self.level:
             self.level = int(self.user_option)
@@ -25,7 +23,7 @@ class Prescribe(Menu, Request):
         text = "All your Prescription:\n"
 
         prescription = self.make_request(
-            'get', f"/medication?citizen={self.user['_id']}")
+            'get', f"/medication?citizen={self.session_data.get('user').get('_id')}")
         for x, y in enumerate(prescription['data']):
             text += f"{x+1}. {y['medication']}\n"
         if prescription['total'] == 0:
@@ -38,7 +36,7 @@ class Prescribe(Menu, Request):
         text = "Available at your Pharmacy"
 
         prescription = self.make_request(
-            'get', f"/medication?citizen={self.user['_id']}&fulfilled=true")
+            'get', f"/medication?citizen={self.session_data.get('user').get('_id')}&fulfilled=true")
         for x, y in enumerate(prescription['data']):
             text += f"{x+1}. {y['medication']}\n"
         if prescription['total'] == 0:
@@ -51,7 +49,7 @@ class Prescribe(Menu, Request):
         text = "Un-available at your Pharmacy"
 
         prescription = self.make_request(
-            'get', f"/medication?citizen={self.user['_id']}&fulfilled=false")
+            'get', f"/medication?citizen={self.session_data.get('user').get('_id')}&fulfilled=false")
         for x, y in enumerate(prescription['data']):
             text += f"{x+1}. {y['medication']}\n"
         if prescription['total'] == 0:
@@ -62,7 +60,7 @@ class Prescribe(Menu, Request):
 
     def close_session(self):
         text = "Received.\nPharmacy will get back to you."
-        
+
         return self.ussd_end(text)
 
     def execute(self):
