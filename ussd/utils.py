@@ -19,11 +19,11 @@ def make_request(method, path, data=None):
     except Exception as e:
         return str(e)
 
+
 def decode_request(req):
     url_params = unquote(req.body.decode("utf"))
     request_dict = dict(
         (x.strip(), y.strip())
-        for x, y in (element.split('=')
-                        for element in url_params.split('&')))
+        for x, y in (element.split('=') for element in url_params.split('&')))
     return request_dict.get("phoneNumber", None), request_dict.get(
         "sessionId", None), request_dict.get('text', None)

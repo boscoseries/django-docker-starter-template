@@ -15,12 +15,14 @@ class Menu(object):
     def ussd_proceed(self, text):
         cache.set(self.session_id, self.session_data)
         text = "CON {}".format(text)
-        return HttpResponse(text, content_type="text/plain")
+        return text
+        # return HttpResponse(text, content_type="text/plain")
 
     def ussd_end(self, text):
         cache.delete(self.session_id)
         text = "END {}".format(text)
-        return HttpResponse(text, content_type="text/plain")
+        return text
+        # return HttpResponse(text, content_type="text/plain")
 
     def home(self):
         """serves the home menu for new users"""
